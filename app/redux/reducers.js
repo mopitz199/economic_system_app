@@ -55,6 +55,7 @@ export default function createReducer(injectedReducers) {
     crudTableDemo: branchReducer(crudTable, 'crudTableDemo'),
     crudTableForm,
     crudTbFrmDemo: branchReducer(crudTableForm, 'crudTbFrmDemo'),
+    crudTbFrmPortfolio: branchReducer(crudTableForm, 'crudTbFrmPortfolio'),
     language: languageProviderReducer,
     router: connectRouter(history),
     ...injectedReducers,

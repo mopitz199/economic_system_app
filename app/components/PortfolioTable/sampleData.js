@@ -1,124 +1,144 @@
+import { fromJS, List, Map as CustomMap } from 'immutable';
+
 export const anchorTable = [
   {
     name: 'id',
     label: 'Id',
     initialValue: '',
     hidden: true
-  }, {
-    name: 'text',
-    label: 'Text Field',
-    initialValue: null,
-    width: 'auto',
+  },
+  {
+    name: 'asset',
+    label: 'Name',
+    initialValue: '',
+    hidden: false,
+    render: (option) => {
+      try{
+        return option.get('name')
+      }catch {
+        try {
+          let val = JSON.parse(option)
+          return val.name
+        }
+        catch(error){
+          try{
+            return val.name
+          }catch{
+            return option
+          }
+        }
+      }
+    }
+  },
+  {
+    name: 'asset',
+    label: 'Symbol',
+    initialValue: '',
+    hidden: false,
+    render: (option) => {
+      try{
+        return option.get('symbol')
+      }catch {
+        try {
+          let val = JSON.parse(option)
+          return val.symbol
+        }
+        catch(error){
+          try{
+            return val.symbol
+          }catch{
+            return option
+          }
+        }
+      }
+    }
+  },
+  {
+    name: 'asset',
+    label: 'Type',
+    initialValue: '',
+    hidden: false,
+    render: (option) => {
+      try{
+        return option.get('asset_type')
+      }catch {
+        try {
+          let val = JSON.parse(option)
+          return val.asset_type
+        }
+        catch(error){
+          try{
+            return val.asset_type
+          }catch{
+            return option
+          }
+        }
+      }
+    }
+  },
+  {
+    name: 'quantity',
+    label: 'Quantity',
+    initialValue: '',
     hidden: false
-  }, {
-    name: 'email',
-    label: 'Email Field',
-    initialValue: null,
-    width: 'auto',
+  },
+  {
+    name: 'purchase_value',
+    label: 'Purchase Value',
+    initialValue: '',
     hidden: false
-  }, {
-    name: 'radio',
-    label: 'Radio Option',
-    initialValue: 'option1',
-    width: '80',
+  },
+  {
+    name: 'current_value',
+    label: 'Current Value',
+    initialValue: '',
     hidden: false
-  }, {
-    name: 'selection',
-    label: 'Selection',
-    initialValue: 'option1',
-    width: '80',
+  },
+  {
+    name: 'performance',
+    label: 'Performance',
+    initialValue: '',
     hidden: false
-  }, {
-    name: 'onof',
-    label: 'On/Of Input',
-    initialValue: true,
-    width: '80',
-    hidden: false
-  }, {
-    name: 'checkbox',
-    label: 'Checkbox',
-    initialValue: true,
-    width: '80',
-    hidden: false
-  }, {
-    name: 'textarea',
-    label: 'Text Area',
-    initialValue: 'This is default text',
-    width: 'auto',
-    hidden: false
-  }, {
+  },
+  {
     name: 'edited',
     label: '',
     initialValue: '',
     hidden: true
-  }, {
+  },
+  {
     name: 'action',
     label: 'Action',
     initialValue: '',
     hidden: false
   },
-];
+]
 
 export const dataApi = [
   {
     id: '1',
-    text: 'Just write',
-    email: 'mail@boss.com',
-    radio: 'option2',
-    selection: 'option1',
-    onof: false,
-    checkbox: true,
-    textarea: 'Lorem ipsum dolor sit amet',
-    edited: false,
-  }, {
-    id: '2',
-    text: 'Some text',
-    email: 'mail@material.com',
-    radio: 'option2',
-    selection: 'option2',
-    onof: false,
-    checkbox: false,
-    textarea: 'Lorem ipsum dolor sit amet',
-    edited: false,
-  }, {
-    id: '3',
-    text: 'Because it is a TextField',
-    email: 'mail@admin.com',
-    radio: 'option1',
-    selection: 'option3',
-    onof: false,
-    checkbox: false,
-    textarea: 'Lorem ipsum dolor sit amet',
-    edited: false,
-  }, {
-    id: '4',
-    text: 'And editable',
-    email: 'mail@example.com',
-    radio: 'option1',
-    selection: 'option1',
-    onof: false,
-    checkbox: true,
-    textarea: 'Lorem ipsum dolor sit amet',
-    edited: false,
-  }, {
-    id: '5',
-    text: 'You can write',
-    email: 'mail@material.com',
-    radio: 'option2',
-    selection: 'option2',
-    onof: false,
-    checkbox: true,
-    textarea: 'Lorem ipsum dolor sit amet',
-    edited: false,
-  }, {
-    id: '6',
-    text: 'Everything You want here',
-    email: 'mail@everything.com',
-    radio: 'option1',
-    selection: 'option3',
-    onof: false,
-    checkbox: false,
-    textarea: 'Lorem ipsum dolor sit amet',
-    edited: false,
+    asset: {
+      name: 'asset1',
+      symbol: 'BTC',
+      asset_type: 'crypto'
+    },
+    type: 'option2',
+    quantity: 'option1',
+    purchase_value: false,
+    current_value: true,
+    performance: 'Lorem ipsum dolor sit amet',
   },
+  {
+    id: '2',
+    asset: {
+      name: 'asset2',
+      symbol: 'BTC',
+      asset_type: 'crypto'
+    },
+    type: 'option2',
+    quantity: 'option1',
+    purchase_value: false,
+    current_value: true,
+    performance: 'Lorem ipsum dolor sit amet',
+  }
 ];

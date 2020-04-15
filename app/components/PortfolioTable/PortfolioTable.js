@@ -30,11 +30,17 @@ import {
   FormControl,
   FormLabel,
   FormControlLabel,
+  Input,
+  Typography,
+  Grid,
+  FormHelperText
 } from '@material-ui/core';
+
 import { anchorTable, dataApi } from './sampleData';
+import PortfolioSearch from './PortfolioSearch';
 
 
-const branch = 'crudTbFrmDemo';
+const branch = 'crudTbFrmPortfolio';
 
 const renderRadioGroup = ({ input, ...rest }) => (
   <RadioGroup
@@ -72,11 +78,29 @@ const styles = ({
   }
 });
 
-class CrudTbFormDemo extends Component {
+class CrudTbFormPortfolio extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      dataApi: [],
+      loaded: false
+    };
+  }
+
   saveRef = ref => {
     this.ref = ref;
     return this.ref;
   };
+
+  componentWillMount(){
+    setTimeout(() => {
+      this.setState({
+        loaded: true,
+        dataApi: dataApi
+      })
+    }, 3000);
+  }
 
   render() {
     const {
@@ -93,96 +117,69 @@ class CrudTbFormDemo extends Component {
       closeNotif,
       messageNotif,
     } = this.props;
+
     const trueBool = true;
-    console.log(this.props)
-    return (
-      <div>
-        <Notification close={() => closeNotif(branch)} message={messageNotif} />
-        <Paper className={classes.root}>
-          <CrudTableForm
-            dataTable={dataTable}
-            openForm={openForm}
-            dataInit={dataApi}
-            anchor={anchorTable}
-            title="Title of Table"
-            fetchData={fetchData}
-            addNew={addNew}
-            closeForm={closeForm}
-            submit={submit}
-            removeRow={removeRow}
-            editRow={editRow}
-            branch={branch}
-            initValues={initValues}
-          >
-            {/* Create Your own form, then arrange or custom it as You like */}
-            <div>
-              <Field
-                name="text"
-                component={TextFieldRedux}
-                placeholder="Text Field"
-                label="Text Field"
-                validate={required}
-                required
-                ref={this.saveRef}
-                className={classes.field}
-              />
-            </div>
-            <div>
-              <Field
-                name="email"
-                component={TextFieldRedux}
-                placeholder="Email Field"
-                label="Email"
-                required
-                validate={[required, email]}
-                className={classes.field}
-              />
-            </div>
-            <div className={classes.fieldBasic}>
-              <FormLabel component="label">Choose One Option</FormLabel>
-              <Field name="radio" className={classes.inlineWrap} component={renderRadioGroup}>
-                <FormControlLabel value="option1" control={<Radio />} label="Option 1" />
-                <FormControlLabel value="option2" control={<Radio />} label="Option 2" />
-              </Field>
-            </div>
-            <div>
-              <FormControl className={classes.field}>
-                <InputLabel htmlFor="selection">Selection</InputLabel>
+
+    if(this.state.loaded){
+      return (
+        <div>
+          <Notification close={() => closeNotif(branch)} message={messageNotif} />
+          <Paper className={classes.root}>
+            <CrudTableForm
+              dataTable={dataTable}
+              openForm={openForm}
+              dataInit={this.state.dataApi}
+              anchor={anchorTable}
+              title="Assets"
+              fetchData={fetchData}
+              addNew={addNew}
+              closeForm={closeForm}
+              submit={submit}
+              removeRow={removeRow}
+              editRow={editRow}
+              branch={branch}
+              initValues={initValues}
+            >
+              <div>
                 <Field
-                  name="selection"
-                  component={SelectRedux}
-                  placeholder="Selection"
+                  name="asset"
+                  component={PortfolioSearch}
+                  required
+                  ref={this.saveRef}
                   autoWidth={trueBool}
-                >
-                  <MenuItem value="option1">Option One</MenuItem>
-                  <MenuItem value="option2">Option Two</MenuItem>
-                  <MenuItem value="option3">Option Three</MenuItem>
-                </Field>
-              </FormControl>
-            </div>
-            <div className={classes.fieldBasic}>
-              <FormLabel component="label">Toggle Input</FormLabel>
-              <div className={classes.inlineWrap}>
-                <FormControlLabel control={<Field name="onof" component={SwitchRedux} />} label="On/OF Switch" />
-                <FormControlLabel control={<Field name="checkbox" component={CheckboxRedux} />} label="Checkbox" />
+                  className={classes.field}
+                />
               </div>
-            </div>
-            <div className={classes.field}>
-              <Field
-                name="textarea"
-                className={classes.field}
-                component={TextFieldRedux}
-                placeholder="Textarea"
-                label="Textarea"
-                multiline={trueBool}
-                rows={4}
-              />
-            </div>
-            {/* No need create button or submit, because that already made in this component */}
-          </CrudTableForm>
-        </Paper>
-      </div>
-    );
+              <div>
+                <Field
+                  name="quantity"
+                  component={TextFieldRedux}
+                  placeholder="Quanity"
+                  label="Quantity"
+                  validate={required}
+                  required
+                  ref={this.saveRef}
+                  className={classes.field}
+                />
+              </div>
+              <div>
+                <Field
+                  name="purchase_value"
+                  component={TextFieldRedux}
+                  placeholder="Purchase Value"
+                  label="Purchase Value"
+                  required
+                  validate={[required]}
+                  className={classes.field}
+                />
+              </div>
+            </CrudTableForm>
+          </Paper>
+        </div>
+      );
+    }else{
+      return null
+    }
   }
 }
 
@@ -190,7 +187,7 @@ renderRadioGroup.propTypes = {
   input: PropTypes.object.isRequired,
 };
 
-CrudTbFormDemo.propTypes = {
+CrudTbFormPortfolio.propTypes = {
   dataTable: PropTypes.object.isRequired,
   openForm: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired,
@@ -224,9 +221,9 @@ const mapDispatchToProps = dispatch => ({
   closeNotif: bindActionCreators(closeNotifAction, dispatch),
 });
 
-const CrudTbFormDemoMapped = connect(
+const CrudTbFormPortfolioMapped = connect(
   mapStateToProps,
   mapDispatchToProps
-)(CrudTbFormDemo);
+)(CrudTbFormPortfolio);
 
-export default withStyles(styles)(CrudTbFormDemoMapped);
+export default withStyles(styles)(CrudTbFormPortfolioMapped);

@@ -19,12 +19,19 @@ const initialState = {
 };
 
 const initialItem = (keyTemplate, anchor) => {
-  const [...rawKey] = keyTemplate.keys();
+  let rawKey = []
+  if(keyTemplate){
+    rawKey = keyTemplate.keys();
+  }else{
+    rawKey = anchor.map(e => e.name)
+    rawKey = new Set(rawKey)
+    rawKey = Array.from(rawKey)
+  }
   const staticKey = {};
   for (let i = 0; i < rawKey.length; i += 1) {
     if (rawKey[i] !== 'id') {
       const itemIndex = anchor.findIndex(a => a.name === rawKey[i]);
-      staticKey[rawKey[i]] = anchor[itemIndex].initialValue;
+      staticKey[rawKey[i]] = anchor[itemIndex] ==! undefined ? anchor[itemIndex].initialValue : "";
     }
   }
 

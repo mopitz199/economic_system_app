@@ -32,9 +32,13 @@ class RowReadOnly extends React.Component {
     };
     const renderCell = dataArray => dataArray.map((itemCell, index) => {
       if (itemCell.name !== 'action' && !itemCell.hidden) {
+        let renderedValue = item.get(itemCell.name) !== undefined ? item.get(itemCell.name).toString() : ''
+        if(itemCell.render !== undefined){
+          renderedValue = itemCell.render(item.get(itemCell.name))
+        }
         return (
           <TableCell padding="none" key={index.toString()}>
-            {item.get(itemCell.name) !== undefined ? item.get(itemCell.name).toString() : ''}
+            {renderedValue}
           </TableCell>
         );
       }

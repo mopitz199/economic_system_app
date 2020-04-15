@@ -14,11 +14,13 @@ export const closeAction = branch => ({
   branch,
   type: `${branch}/${types.CLOSE_FORM}`
 });
-export const submitAction = (newData, branch) => ({
-  branch,
-  type: `${branch}/${types.SUBMIT_DATA}`,
-  newData
-});
+export const submitAction = (newData, branch) => {
+  return {
+    branch,
+    type: `${branch}/${types.SUBMIT_DATA}`,
+    newData
+  }
+};
 export const removeAction = (item, branch) => ({
   branch,
   type: `${branch}/${types.REMOVE_ROW_FORM}`,
