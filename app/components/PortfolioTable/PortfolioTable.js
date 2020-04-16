@@ -58,6 +58,10 @@ const email = value => (
     ? 'Invalid email'
     : undefined
 );
+const floatNumber = value => {
+  var regexp = /^\d+(\.\d{1,10})?$/;
+  return value && regexp.test(value) ? undefined : 'Invalid number'
+}
 
 const styles = ({
   root: {
@@ -93,13 +97,47 @@ class CrudTbFormPortfolio extends Component {
     return this.ref;
   };
 
-  componentWillMount(){
-    setTimeout(() => {
-      this.setState({
-        loaded: true,
-        dataApi: dataApi
+  proccesFetch = (data) => {
+    let finalData = []
+    data.map((assetPortfolio) => {
+      let asset = assetPortfolio.asset
+      let performance = assetPortfolio.performance
+      if(performance){
+        performance = `${performance}%`
+      }
+      finalData.push({
+        id: assetPortfolio.id,
+        asset: JSON.stringify({
+          "name": asset.name,
+          "symbol": asset.symbol,
+          "asset_type": asset.asset_type
+        }),
+        quantity: assetPortfolio.quantity,
+        purchase_value: assetPortfolio.purchase_price,
+        current_value: assetPortfolio.current_price,
+        performance: performance,
       })
-    }, 3000);
+    })
+    return finalData;
+  }
+
+  componentWillMount(){
+    fetch(
+      `https://economicapp.io/api/asset/asset_portfolio/`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Token 26704736d3a5c8712dc149fb67643608f0397267'
+        }
+      }
+    )
+      .then(res => res.json())
+      .then(res => {
+        this.setState({
+          loaded: true,
+          dataApi: this.proccesFetch(res['results'])
+        })
+      })
   }
 
   render() {
@@ -134,9 +172,55 @@ class CrudTbFormPortfolio extends Component {
               fetchData={fetchData}
               addNew={addNew}
               closeForm={closeForm}
-              submit={submit}
-              removeRow={removeRow}
-              editRow={editRow}
+              submit={(data, reducerName) => {
+                const id = data.get("id")
+                const assetStr = data.get("asset")
+                const assetJSON = JSON.parse(assetStr)
+                const assetId = assetJSON.id
+                const quantity = data.get("quantity")
+                const purchaseValue = data.get("purchase_value")
+                if(id){
+                  // Update
+                }else{
+                  let body = {
+                    "asset": assetId,
+                    "quantity": parseFloat(quantity),
+                    "purchase_price": purchaseValue,
+                  }
+                  fetch(
+                    `https://economicapp.io/api/asset/asset_portfolio/`,
+                    {
+                      method: 'POST',
+                      body: JSON.stringify(body),
+                      headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Token 26704736d3a5c8712dc149fb67643608f0397267'
+                      }
+                    }
+                  )
+                    .then(res => {
+                      if(res.status == 201){
+                        submit(data, reducerName)
+                      }else{
+                        return res.json()
+                      }
+                    })
+                    .then(res => {
+                      if(res){
+                        alert(res)
+                      }
+                    })
+                }
+              }}
+              removeRow={(data, reducerName) => {
+                const id = data.get('id')
+                setTimeout(() => {
+                  removeRow(data, reducerName)
+                }, 2000)
+              }}
+              editRow={(data, reducerName) => {
+                editRow(data, reducerName)
+              }}
               branch={branch}
               initValues={initValues}
             >
@@ -145,6 +229,7 @@ class CrudTbFormPortfolio extends Component {
                   name="asset"
                   component={PortfolioSearch}
                   required
+                  validate={[required]}
                   ref={this.saveRef}
                   autoWidth={trueBool}
                   className={classes.field}
@@ -156,8 +241,8 @@ class CrudTbFormPortfolio extends Component {
                   component={TextFieldRedux}
                   placeholder="Quanity"
                   label="Quantity"
-                  validate={required}
                   required
+                  validate={[required, floatNumber]}
                   ref={this.saveRef}
                   className={classes.field}
                 />
@@ -169,7 +254,7 @@ class CrudTbFormPortfolio extends Component {
                   placeholder="Purchase Value"
                   label="Purchase Value"
                   required
-                  validate={[required]}
+                  validate={[required, floatNumber]}
                   className={classes.field}
                 />
               </div>

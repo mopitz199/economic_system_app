@@ -317,8 +317,9 @@ export default function PortfolioSearch(props) {
     data.forEach(asset => {
       inputValue = inputValue.toLowerCase()
       options.push({
-        'label': `${asset.name} (${asset.symbol}) (${asset.asset_type})`,
+        'label': getLabelFromJson(asset),
         'value': JSON.stringify({
+          'id': asset.id,
           'name': asset.name,
           'symbol': asset.symbol,
           'asset_type': asset.asset_type
@@ -329,8 +330,9 @@ export default function PortfolioSearch(props) {
   };
 
   const loadOptions = (inputValue, callback) => {
+    console.log("loading options")
     fetch(
-      `https://economicapp.io/api/asset/assets/?limit=10&symbol=${inputValue}&offset=0`,
+      `https://economicapp.io/api/asset/search/?q=${inputValue}`,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -342,11 +344,29 @@ export default function PortfolioSearch(props) {
       .then(res => callback(processSearch(res['results'], inputValue)))
   };
 
+  const getLabelFromJson = (asset) => {
+    return `${asset.name} (${asset.symbol}) (${asset.asset_type})`
+  };
+
+  const getLabelFromString = (assetStr) => {
+    try{
+      const asset = JSON.parse(assetStr)
+      return getLabelFromJson(asset);
+    }catch{
+      return assetStr;
+    }
+  }
+
+  console.log(props.input.value)
   return (
     <div className={classes.root}>
       <NoSsr>
         <InputLabel htmlFor="uncontrolled-native">Asset</InputLabel>
         <AsyncSelect
+          value={{
+            'label': getLabelFromString(props.input.value),
+            'value': props.input.value
+          }}
           name='asset'
           inputId="react-select-multiple"
           components={components}
@@ -356,7 +376,6 @@ export default function PortfolioSearch(props) {
           cacheOptions
           loadOptions={loadOptions}
           defaultOptions
-          onInputChange={(option) => props.input.onChange(option.value)}
           onChange = {(option) => props.input.onChange(option.value)}
           onBlur = {(option) => props.input.onBlur(option.value)}
         />

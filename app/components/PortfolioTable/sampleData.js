@@ -1,5 +1,6 @@
 import { fromJS, List, Map as CustomMap } from 'immutable';
 
+
 export const anchorTable = [
   {
     name: 'id',
@@ -64,7 +65,7 @@ export const anchorTable = [
       }catch {
         try {
           let val = JSON.parse(option)
-          return val.asset_type
+          return val.asset_type.charAt(0).toUpperCase() + val.asset_type.slice(1)
         }
         catch(error){
           try{
@@ -117,28 +118,18 @@ export const anchorTable = [
 export const dataApi = [
   {
     id: '1',
-    asset: {
-      name: 'asset1',
-      symbol: 'BTC',
-      asset_type: 'crypto'
-    },
-    type: 'option2',
-    quantity: 'option1',
-    purchase_value: false,
-    current_value: true,
-    performance: 'Lorem ipsum dolor sit amet',
+    asset: '{"name": "Bitcoin","symbol": "BTC","asset_type": "cryptos"}',
+    quantity: 0.5123,
+    purchase_value: 3423.45,
+    current_value: 4545.23,
+    performance: '-10%',
   },
   {
     id: '2',
-    asset: {
-      name: 'asset2',
-      symbol: 'BTC',
-      asset_type: 'crypto'
-    },
-    type: 'option2',
-    quantity: 'option1',
-    purchase_value: false,
-    current_value: true,
-    performance: 'Lorem ipsum dolor sit amet',
+    asset: '{"name": "Cardano","symbol": "ADA","asset_type": "cryptos"}',
+    quantity: 65000,
+    purchase_value: 0.03456,
+    current_value: 0.024322,
+    performance: '18.45%',
   }
 ];
