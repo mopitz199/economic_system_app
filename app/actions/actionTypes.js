@@ -26,6 +26,7 @@ export const CLOSE_FORM = 'CLOSE_FORM';
 export const SUBMIT_DATA = 'SUBMIT_DATA';
 export const REMOVE_ROW_FORM = 'REMOVE_ROW_FORM';
 export const EDIT_ROW_FORM = 'EDIT_ROW_FORM';
+export const ERROR_NOTIF = 'ERROR_NOTIF';
 
 // Social Media
 export const FETCH_TIMELINE_DATA = 'FETCH_TIMELINE_DATA';

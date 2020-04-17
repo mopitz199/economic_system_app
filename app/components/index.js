@@ -1,3 +1,5 @@
+import CustomNotification from "./CustomNotification/CustomNotification";
+
 export Header from './Header/Header';
 export Sidebar from './Sidebar/Sidebar';
 export Footer from './Footer/Footer';
@@ -90,3 +92,4 @@ export TemplateSettings from './TemplateSettings';
 // My App
 export MilestoneTable from './MilestoneTable/MilestoneTable';
 export PortfolioTable from './PortfolioTable/PortfolioTable';
+export CustomNotification from './CustomNotification/CustomNotification';

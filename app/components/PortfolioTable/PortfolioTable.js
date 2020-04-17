@@ -18,9 +18,10 @@ import {
   submitAction,
   removeAction,
   editAction,
-  closeNotifAction
+  closeNotifAction,
+  errorNotifAction,
 } from 'actions/CrudTbFrmActions';
-import { CrudTableForm, Notification } from 'components';
+import { CrudTableForm, Notification, CustomNotification } from 'components';
 import {
   Paper,
   MenuItem,
@@ -33,31 +34,20 @@ import {
   Input,
   Typography,
   Grid,
-  FormHelperText
+  FormHelperText,
+  Snackbar
 } from '@material-ui/core';
 
-import { anchorTable, dataApi } from './sampleData';
+import { anchorTable } from './sampleData';
 import PortfolioSearch from './PortfolioSearch';
+
+import {server, headers} from '../../constants';
 
 
 const branch = 'crudTbFrmPortfolio';
 
-const renderRadioGroup = ({ input, ...rest }) => (
-  <RadioGroup
-    {...input}
-    {...rest}
-    valueselected={input.value}
-    onChange={(event, value) => input.onChange(value)}
-  />
-);
-
 // validation functions
 const required = value => (value == null ? 'Required' : undefined);
-const email = value => (
-  value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)
-    ? 'Invalid email'
-    : undefined
-);
 const floatNumber = value => {
   var regexp = /^\d+(\.\d{1,10})?$/;
   return value && regexp.test(value) ? undefined : 'Invalid number'
@@ -82,13 +72,18 @@ const styles = ({
   }
 });
 
+
 class CrudTbFormPortfolio extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
       dataApi: [],
-      loaded: false
+      loaded: false,
+
+      openNotification: false,
+      variant: null,
+      message: null,
     };
   }
 
@@ -96,6 +91,14 @@ class CrudTbFormPortfolio extends Component {
     this.ref = ref;
     return this.ref;
   };
+
+  showCustomNotification = (variant, message) => {
+    this.setState({
+      variant,
+      message,
+      openNotification: true
+    })
+  }
 
   proccesFetch = (data) => {
     let finalData = []
@@ -123,13 +126,8 @@ class CrudTbFormPortfolio extends Component {
 
   componentWillMount(){
     fetch(
-      `https://economicapp.io/api/asset/asset_portfolio/`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Token 26704736d3a5c8712dc149fb67643608f0397267'
-        }
-      }
+      `${server}/api/asset/asset_portfolio/`,
+      {headers}
     )
       .then(res => res.json())
       .then(res => {
@@ -154,6 +152,8 @@ class CrudTbFormPortfolio extends Component {
       initValues,
       closeNotif,
       messageNotif,
+      variant,
+      errorNotifAction,
     } = this.props;
 
     const trueBool = true;
@@ -161,7 +161,11 @@ class CrudTbFormPortfolio extends Component {
     if(this.state.loaded){
       return (
         <div>
-          <Notification close={() => closeNotif(branch)} message={messageNotif} />
+          <Notification
+            close={() => closeNotif(branch)}
+            message={messageNotif}
+            variant={variant}
+          />
           <Paper className={classes.root}>
             <CrudTableForm
               dataTable={dataTable}
@@ -181,6 +185,7 @@ class CrudTbFormPortfolio extends Component {
                 const purchaseValue = data.get("purchase_value")
                 if(id){
                   // Update
+                  submit(data, reducerName)
                 }else{
                   let body = {
                     "asset": assetId,
@@ -188,26 +193,22 @@ class CrudTbFormPortfolio extends Component {
                     "purchase_price": purchaseValue,
                   }
                   fetch(
-                    `https://economicapp.io/api/asset/asset_portfolio/`,
+                    `${server}/api/asset/asset_portfolio/`,
                     {
                       method: 'POST',
                       body: JSON.stringify(body),
-                      headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Token 26704736d3a5c8712dc149fb67643608f0397267'
-                      }
+                      headers
                     }
                   )
                     .then(res => {
                       if(res.status == 201){
+                        data.message = "Asset created successfully"
                         submit(data, reducerName)
                       }else{
-                        return res.json()
-                      }
-                    })
-                    .then(res => {
-                      if(res){
-                        alert(res)
+                        errorNotifAction(
+                          "Error on asset creation",
+                          reducerName
+                        )
                       }
                     })
                 }
@@ -215,6 +216,7 @@ class CrudTbFormPortfolio extends Component {
               removeRow={(data, reducerName) => {
                 const id = data.get('id')
                 setTimeout(() => {
+                  data.message = "Asset removed successfully"
                   removeRow(data, reducerName)
                 }, 2000)
               }}
@@ -268,10 +270,6 @@ class CrudTbFormPortfolio extends Component {
   }
 }
 
-renderRadioGroup.propTypes = {
-  input: PropTypes.object.isRequired,
-};
-
 CrudTbFormPortfolio.propTypes = {
   dataTable: PropTypes.object.isRequired,
   openForm: PropTypes.bool.isRequired,
@@ -280,11 +278,13 @@ CrudTbFormPortfolio.propTypes = {
   addNew: PropTypes.func.isRequired,
   closeForm: PropTypes.func.isRequired,
   submit: PropTypes.func.isRequired,
+  errorNotifAction: PropTypes.func.isRequired,
   removeRow: PropTypes.func.isRequired,
   editRow: PropTypes.func.isRequired,
   initValues: PropTypes.object.isRequired,
   closeNotif: PropTypes.func.isRequired,
   messageNotif: PropTypes.string.isRequired,
+  variant: PropTypes.string.isRequired,
 };
 
 
@@ -294,6 +294,7 @@ const mapStateToProps = state => ({
   dataTable: state.getIn([branch, 'dataTable']),
   openForm: state.getIn([branch, 'showFrm']),
   messageNotif: state.getIn([branch, 'notifMsg']),
+  variant: state.getIn([branch, 'variant']),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -304,6 +305,7 @@ const mapDispatchToProps = dispatch => ({
   removeRow: bindActionCreators(removeAction, dispatch),
   editRow: bindActionCreators(editAction, dispatch),
   closeNotif: bindActionCreators(closeNotifAction, dispatch),
+  errorNotifAction: bindActionCreators(errorNotifAction, dispatch),
 });
 
 const CrudTbFormPortfolioMapped = connect(

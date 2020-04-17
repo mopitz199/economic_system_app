@@ -7,7 +7,8 @@ import {
   SUBMIT_DATA,
   REMOVE_ROW_FORM,
   EDIT_ROW_FORM,
-  CLOSE_NOTIF
+  CLOSE_NOTIF,
+  ERROR_NOTIF,
 } from 'ba-actions/actionTypes';
 
 const initialState = {
@@ -16,6 +17,7 @@ const initialState = {
   editingId: '',
   showFrm: false,
   notifMsg: '',
+  variant: '',
 };
 
 const initialItem = (keyTemplate, anchor) => {
@@ -58,11 +60,13 @@ export default function reducer(state = initialImmutableState, action = {}) {
       });
     case `${branch}/${SUBMIT_DATA}`:
       return state.withMutations((mutableState) => {
+        const message = action.newData.message
         if (state.get('editingId') === action.newData.get('id')) {
           // Update data
           mutableState
             .update('dataTable', dataTable => dataTable.setIn([editingIndex], action.newData))
-            .set('notifMsg', notif.updated);
+            .set('notifMsg', message ? message : notif.updated)
+            .set('variant', 'success');
         } else {
           // Insert data
           const id = (+new Date() + Math.floor(Math.random() * 999999)).toString(36);
@@ -70,7 +74,8 @@ export default function reducer(state = initialImmutableState, action = {}) {
           const newItem = initItem.update('id', (val = id) => val);
           mutableState
             .update('dataTable', dataTable => dataTable.unshift(newItem))
-            .set('notifMsg', notif.saved);
+            .set('notifMsg', message ? message : notif.saved)
+            .set('variant', 'success');
         }
         mutableState.set('showFrm', false);
         mutableState.set('formValues', Map());
@@ -83,10 +88,12 @@ export default function reducer(state = initialImmutableState, action = {}) {
       });
     case `${branch}/${REMOVE_ROW_FORM}`:
       return state.withMutations((mutableState) => {
+        const message = action.item.message
         const index = state.get('dataTable').indexOf(action.item);
         mutableState
           .update('dataTable', dataTable => dataTable.splice(index, 1))
-          .set('notifMsg', notif.removed);
+          .set('notifMsg', message ? message : notif.removed)
+          .set('variant', 'success');
       });
     case `${branch}/${EDIT_ROW_FORM}`:
       return state.withMutations((mutableState) => {
@@ -94,11 +101,19 @@ export default function reducer(state = initialImmutableState, action = {}) {
         mutableState
           .set('formValues', action.item)
           .set('editingId', action.item.get('id'))
-          .set('showFrm', true);
+          .set('showFrm', true)
       });
     case `${branch}/${CLOSE_NOTIF}`:
       return state.withMutations((mutableState) => {
         mutableState.set('notifMsg', '');
+      });
+    case `${branch}/${ERROR_NOTIF}`:
+      return state.withMutations((mutableState) => {
+        debugger
+        const message = action.message
+        mutableState
+          .set('notifMsg', message)
+          .set('variant', 'error');
       });
     default:
       return state;

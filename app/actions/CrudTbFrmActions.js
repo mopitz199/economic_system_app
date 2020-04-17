@@ -35,3 +35,11 @@ export const closeNotifAction = branch => ({
   branch,
   type: `${branch}/${types.CLOSE_NOTIF}`,
 });
+export const errorNotifAction = (message, branch) => {
+  debugger
+  return {
+    branch,
+    type: `${branch}/${types.ERROR_NOTIF}`,
+    message
+  }
+};

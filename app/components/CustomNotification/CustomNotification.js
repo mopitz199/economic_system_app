@@ -97,49 +97,41 @@ MySnackbarContent.defaultProps = {
 
 const MySnackbarContentWrapper = withStyles(styles1)(MySnackbarContent);
 
-const styles = theme => ({
-  close: {
-    width: theme.spacing(4),
-  },
-});
+class CustomSnackbar extends React.Component{
+  state = {
+    openStyle: this.props.initOpenValue,
+  };
 
-class Notification extends React.Component {
-  handleClose = (event, reason) => {
+  handleClickStyle = () => {
+    this.setState({ openStyle: true });
+  };
+
+  handleCloseStyle = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
-    this.props.close();
+    this.setState({ openStyle: false });
   };
 
-  render() {
-    const { variant, message } = this.props;
+  render(){
     return (
       <Snackbar
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',
         }}
-        open={message !== ''}
-        onClose={() => this.handleClose()}
-        autoHideDuration={3000}
-        ContentProps={{
-          'aria-describedby': 'message-id',
-        }}
+        open={this.state.openStyle}
+        autoHideDuration={6000}
+        onClose={this.handleCloseStyle}
       >
         <MySnackbarContentWrapper
-          onClose={() => this.handleClose()}
-          variant={variant}
-          message={message}
+          onClose={this.handleCloseStyle}
+          variant={this.props.variant}
+          message={this.props.message}
         />
       </Snackbar>
-    );
+    )
   }
 }
 
-Notification.propTypes = {
-  classes: PropTypes.object.isRequired,
-  close: PropTypes.func.isRequired,
-  message: PropTypes.string.isRequired,
-};
-
-export default withStyles(styles)(Notification);
+export default CustomSnackbar;
