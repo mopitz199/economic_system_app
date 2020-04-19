@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import AddIcon from '@material-ui/icons/Add';
 import css from 'ba-styles/Table.scss';
+import Type from 'ba-styles/Typography.scss';
 import {
   Table,
   TableBody,
@@ -15,11 +16,13 @@ import {
   Tooltip,
   Button,
 } from '@material-ui/core';
-import { Grid, FormLabel, FormControlLabel, Radio, RadioGroup, Paper } from '@material-ui/core';
+import { Grid, FormLabel, FormControlLabel, Radio, RadioGroup, Paper, Box } from '@material-ui/core';
 import Icon from '@material-ui/core/Icon';
 
 import RowReadOnly from './RowReadOnly';
 import styles from './tableStyle-jss';
+
+import EmptyIcon from '../../../EmptyIcon';
 
 class MainTableForm extends React.Component {
   render() {
@@ -54,7 +57,7 @@ class MainTableForm extends React.Component {
     });
 
     const renderTable = (items) => {
-      if(items.size > 0){
+      if (items.size > 0) {
         return (
           <Table className={classNames(css.tableCrud, classes.table, css.stripped)}>
             <TableHead>
@@ -66,21 +69,22 @@ class MainTableForm extends React.Component {
               {getItems(items)}
             </TableBody>
           </Table>
-        )
-      }else{
-        return (
+        );
+      }
+      return (
+        <Box p={10}>
           <Grid
             container
-            alignItems={"center"}
-            direction={"column"}
-            justify={"center"}
+            alignItems="center"
+            direction="column"
+            justify="center"
           >
-            <Icon style={{'fontSize': '150px', 'color': 'gray'}}>equalizer</Icon>
-            <h1>There's no asset in your portfolio</h1>
+            <EmptyIcon size={300}/>
+            <Typography variant="h5" className={Type.regular}>There's no assets in your portfolio</Typography>
           </Grid>
-        )
-      }
-    }
+        </Box>
+      );
+    };
 
     return (
       <div>

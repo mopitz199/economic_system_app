@@ -2,17 +2,17 @@ import classnames from 'classnames';
 import Type from 'ba-styles/Typography.scss';
 
 const percentageStyle = (value) => {
-  let classes = {}
-  if(value){
-    if(value.includes('-')){
-      classes[Type.textError] = true
+  const classes = {};
+  if (value) {
+    if (value.includes('-')) {
+      classes[Type.textError] = true;
     }
-    if(!value.includes('-')){
-      classes[Type.textSuccess] = true
+    if (!value.includes('-')) {
+      classes[Type.textSuccess] = true;
     }
   }
-  return classnames(classes)
-}
+  return classnames(classes);
+};
 
 export const anchorTable = [
   {
@@ -27,8 +27,8 @@ export const anchorTable = [
     initialValue: '',
     hidden: false,
     render: (option) => {
-      let val = JSON.parse(option)
-      return val.name
+      const val = JSON.parse(option);
+      return val.name;
     }
   },
   {
@@ -37,8 +37,8 @@ export const anchorTable = [
     initialValue: '',
     hidden: false,
     render: (option) => {
-      let val = JSON.parse(option)
-      return val.symbol
+      const val = JSON.parse(option);
+      return val.symbol;
     }
   },
   {
@@ -47,8 +47,8 @@ export const anchorTable = [
     initialValue: '',
     hidden: false,
     render: (option) => {
-      let val = JSON.parse(option)
-      return val.asset_type.charAt(0).toUpperCase() + val.asset_type.slice(1)
+      const val = JSON.parse(option);
+      return val.asset_type.charAt(0).toUpperCase() + val.asset_type.slice(1);
     }
   },
   {
@@ -62,18 +62,14 @@ export const anchorTable = [
     label: 'Purchase Value',
     initialValue: '',
     hidden: false,
-    render: (value) => {
-      return `$${value}`
-    }
+    render: (value) => `$${value}`
   },
   {
     name: 'current_value',
     label: 'Current Value',
     initialValue: '',
     hidden: false,
-    render: (value) => {
-      return `$${value}`
-    }
+    render: (value) => `$${value}`
   },
   {
     name: 'performance',
@@ -81,15 +77,12 @@ export const anchorTable = [
     initialValue: '',
     hidden: false,
     render: (performance) => {
-      if(performance){
-        return `${performance}%`
-      }else{
-        return performance
+      if (performance) {
+        return `${performance}%`;
       }
+      return performance;
     },
-    className: (value) => {
-      return percentageStyle(value)
-    }
+    className: (value) => percentageStyle(value)
   },
   {
     name: 'edited',
@@ -103,4 +96,4 @@ export const anchorTable = [
     initialValue: '',
     hidden: false
   },
-]
+];

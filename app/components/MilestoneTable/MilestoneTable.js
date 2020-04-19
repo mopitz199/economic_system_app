@@ -2,6 +2,7 @@
 import React from 'react';
 import MUIDataTable from 'mui-datatables';
 import classnames from 'classnames';
+import tableStyles from 'ba-styles/Table.scss';
 
 import Type from 'ba-styles/Typography.scss';
 
@@ -118,6 +119,7 @@ class AdvFilter extends React.Component {
       <MUIDataTable
         title="Assets"
         data={data}
+        className={classnames(tableStyles.small)}
         columns={columns}
         options={options}
       />

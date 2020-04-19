@@ -15,6 +15,8 @@ import {
   InputLabel,
 } from '@material-ui/core';
 
+import {server, headers} from '../../constants';
+
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
@@ -332,13 +334,8 @@ export default function PortfolioSearch(props) {
   const loadOptions = (inputValue, callback) => {
     console.log("loading options")
     fetch(
-      `https://economicapp.io/api/asset/search/?q=${inputValue}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Token 26704736d3a5c8712dc149fb67643608f0397267'
-        }
-      }
+      `${server}/api/asset/search/?q=${inputValue}`,
+      {headers}
     )
       .then(res => res.json())
       .then(res => callback(processSearch(res['results'], inputValue)))

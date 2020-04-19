@@ -60,7 +60,7 @@ export default function reducer(state = initialImmutableState, action = {}) {
       });
     case `${branch}/${SUBMIT_DATA}`:
       return state.withMutations((mutableState) => {
-        const message = action.newData.get("message");
+        const message = action.newData.get('message');
         if (state.get('editingId') === action.newData.get('id')) {
           // Update data
           mutableState
@@ -69,7 +69,7 @@ export default function reducer(state = initialImmutableState, action = {}) {
             .set('variant', 'success');
         } else {
           // Insert data
-          const id = action.newData.get("id");
+          const id = action.newData.get('id');
           const initItem = Map(action.newData);
           const newItem = initItem.update('id', (val = id) => val);
           mutableState
@@ -88,7 +88,7 @@ export default function reducer(state = initialImmutableState, action = {}) {
       });
     case `${branch}/${REMOVE_ROW_FORM}`:
       return state.withMutations((mutableState) => {
-        const message = action.item.get("message");
+        const message = action.item.get('message');
         const index = state.get('dataTable').indexOf(action.item);
         mutableState
           .update('dataTable', dataTable => dataTable.splice(index, 1))
