@@ -6,10 +6,7 @@ import { Field } from 'redux-form/immutable';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
-  CheckboxRedux,
-  SelectRedux,
   TextFieldRedux,
-  SwitchRedux
 } from 'components/Forms/ReduxFormMUI';
 import {
   fetchAction,
@@ -21,28 +18,12 @@ import {
   closeNotifAction,
   errorNotifAction,
 } from 'actions/CrudTbFrmActions';
-import { CrudTableForm, Notification, CustomNotification } from 'components';
-import {
-  Paper,
-  MenuItem,
-  InputLabel,
-  Radio,
-  RadioGroup,
-  FormControl,
-  FormLabel,
-  FormControlLabel,
-  Input,
-  Typography,
-  Grid,
-  FormHelperText,
-  Snackbar
-} from '@material-ui/core';
+import { CrudTableForm, Notification } from 'components';
+import { Paper } from '@material-ui/core';
 
-import { anchorTable } from './sampleData';
 import PortfolioSearch from './PortfolioSearch';
-
+import { anchorTable } from './sampleData';
 import {server, headers} from '../../constants';
-
 
 const branch = 'crudTbFrmPortfolio';
 
@@ -69,7 +50,7 @@ const styles = ({
   inlineWrap: {
     display: 'flex',
     flexDirection: 'row'
-  }
+  },
 });
 
 
@@ -105,12 +86,10 @@ class CrudTbFormPortfolio extends Component {
     data.map((assetPortfolio) => {
       let asset = assetPortfolio.asset
       let performance = assetPortfolio.performance
-      if(performance){
-        performance = `${performance}%`
-      }
       finalData.push({
         id: assetPortfolio.id,
         asset: JSON.stringify({
+          "id": asset.id,
           "name": asset.name,
           "symbol": asset.symbol,
           "asset_type": asset.asset_type
@@ -138,6 +117,119 @@ class CrudTbFormPortfolio extends Component {
       })
   }
 
+  getAssetJSON(data){
+    const assetStr = data.get("asset")
+    const assetJSON = JSON.parse(assetStr)
+    return assetJSON
+  }
+
+  createAssetPortfolio(
+    data,
+    submit,
+    reducerName
+  ){
+    const assetJSON = this.getAssetJSON(data)
+
+    let body = {
+      "asset": assetJSON.id,
+      "quantity":  parseFloat(data.get("quantity")),
+      "purchase_price": data.get("purchase_value"),
+    }
+    fetch(
+      `${server}/api/asset/asset_portfolio/`,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers
+      }
+    )
+      .then(res => {
+        if(res.status == 201){
+          return res.json()
+        }else{
+          return null
+        }
+      })
+      .then(res => {
+        if(res){
+          data = data.set("id", res.id)
+          data = data.set("current_value", res.current_price)
+          data = data.set("performance", res.performance)
+          data = data.set("message", "Asset created successfully")
+          submit(data, reducerName)
+        }else{
+          errorNotifAction(
+            "Error on asset creation",
+            reducerName
+          )
+        }
+      })
+  }
+
+  updateAssetPortfolio(
+    data,
+    submit,
+    reducerName
+  ){
+    const assetJSON = this.getAssetJSON(data)
+
+    let body = {
+      "asset": assetJSON.id,
+      "quantity": parseFloat(data.get("quantity")),
+      "purchase_price": data.get("purchase_value"),
+    }
+    fetch(
+      `${server}/api/asset/asset_portfolio/${data.get("id")}/`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(body),
+        headers
+      }
+    )
+      .then(res => {
+        if(res.status == 200){
+          return res.json()
+        }else{
+          return null
+        }
+      })
+      .then(res => {
+        if(res){
+          data = data.set("current_value", res.current_price)
+          data = data.set("performance", res.performance)
+          data = data.set('message', "Asset updated successfully")
+          submit(data, reducerName)
+        }else{
+          errorNotifAction(
+            "Error on asset updating",
+            reducerName
+          )
+        }
+      })
+  }
+
+  deleteAssetPortfolio(data, removeRow, reducerName){
+    const id = data.get('id')
+    fetch(
+      `${server}/api/asset/asset_portfolio/${id}`,
+      {
+        method: 'DELETE',
+        headers
+      }
+    )
+      .then(res => {
+        if(res.status == 204){
+          data = data.set('message', "Asset has been removed")
+          removeRow(data, reducerName)    
+        }else{
+          errorNotifAction(
+            "Error on asset delete",
+            reducerName
+          )
+        }
+      })
+  }
+
   render() {
     const {
       classes,
@@ -153,7 +245,6 @@ class CrudTbFormPortfolio extends Component {
       closeNotif,
       messageNotif,
       variant,
-      errorNotifAction,
     } = this.props;
 
     const trueBool = true;
@@ -177,48 +268,14 @@ class CrudTbFormPortfolio extends Component {
               addNew={addNew}
               closeForm={closeForm}
               submit={(data, reducerName) => {
-                const id = data.get("id")
-                const assetStr = data.get("asset")
-                const assetJSON = JSON.parse(assetStr)
-                const assetId = assetJSON.id
-                const quantity = data.get("quantity")
-                const purchaseValue = data.get("purchase_value")
-                if(id){
-                  // Update
-                  submit(data, reducerName)
+                if(data.get("id")){
+                  this.updateAssetPortfolio(data, submit, reducerName)
                 }else{
-                  let body = {
-                    "asset": assetId,
-                    "quantity": parseFloat(quantity),
-                    "purchase_price": purchaseValue,
-                  }
-                  fetch(
-                    `${server}/api/asset/asset_portfolio/`,
-                    {
-                      method: 'POST',
-                      body: JSON.stringify(body),
-                      headers
-                    }
-                  )
-                    .then(res => {
-                      if(res.status == 201){
-                        data.message = "Asset created successfully"
-                        submit(data, reducerName)
-                      }else{
-                        errorNotifAction(
-                          "Error on asset creation",
-                          reducerName
-                        )
-                      }
-                    })
+                  this.createAssetPortfolio(data, submit, reducerName)
                 }
               }}
               removeRow={(data, reducerName) => {
-                const id = data.get('id')
-                setTimeout(() => {
-                  data.message = "Asset removed successfully"
-                  removeRow(data, reducerName)
-                }, 2000)
+                this.deleteAssetPortfolio(data, removeRow, reducerName)
               }}
               editRow={(data, reducerName) => {
                 editRow(data, reducerName)

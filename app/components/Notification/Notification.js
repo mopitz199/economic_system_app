@@ -85,7 +85,6 @@ function MySnackbarContent(props) {
 
 MySnackbarContent.propTypes = {
   classes: PropTypes.object.isRequired,
-  className: PropTypes.string.isRequired,
   message: PropTypes.node.isRequired,
   onClose: PropTypes.func,
   variant: PropTypes.oneOf(['success', 'warning', 'error', 'info']).isRequired,

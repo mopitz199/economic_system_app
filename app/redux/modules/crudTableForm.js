@@ -21,19 +21,19 @@ const initialState = {
 };
 
 const initialItem = (keyTemplate, anchor) => {
-  let rawKey = []
-  if(keyTemplate){
+  let rawKey = [];
+  if (keyTemplate) {
     rawKey = keyTemplate.keys();
-  }else{
-    rawKey = anchor.map(e => e.name)
-    rawKey = new Set(rawKey)
-    rawKey = Array.from(rawKey)
+  } else {
+    rawKey = anchor.map(e => e.name);
+    rawKey = new Set(rawKey);
+    rawKey = Array.from(rawKey);
   }
   const staticKey = {};
   for (let i = 0; i < rawKey.length; i += 1) {
     if (rawKey[i] !== 'id') {
       const itemIndex = anchor.findIndex(a => a.name === rawKey[i]);
-      staticKey[rawKey[i]] = anchor[itemIndex] ==! undefined ? anchor[itemIndex].initialValue : "";
+      staticKey[rawKey[i]] = anchor[itemIndex] == !undefined ? anchor[itemIndex].initialValue : '';
     }
   }
 
@@ -60,21 +60,21 @@ export default function reducer(state = initialImmutableState, action = {}) {
       });
     case `${branch}/${SUBMIT_DATA}`:
       return state.withMutations((mutableState) => {
-        const message = action.newData.message
+        const message = action.newData.get("message");
         if (state.get('editingId') === action.newData.get('id')) {
           // Update data
           mutableState
             .update('dataTable', dataTable => dataTable.setIn([editingIndex], action.newData))
-            .set('notifMsg', message ? message : notif.updated)
+            .set('notifMsg', message || notif.updated)
             .set('variant', 'success');
         } else {
           // Insert data
-          const id = (+new Date() + Math.floor(Math.random() * 999999)).toString(36);
+          const id = action.newData.get("id");
           const initItem = Map(action.newData);
           const newItem = initItem.update('id', (val = id) => val);
           mutableState
             .update('dataTable', dataTable => dataTable.unshift(newItem))
-            .set('notifMsg', message ? message : notif.saved)
+            .set('notifMsg', message || notif.saved)
             .set('variant', 'success');
         }
         mutableState.set('showFrm', false);
@@ -88,11 +88,11 @@ export default function reducer(state = initialImmutableState, action = {}) {
       });
     case `${branch}/${REMOVE_ROW_FORM}`:
       return state.withMutations((mutableState) => {
-        const message = action.item.message
+        const message = action.item.get("message");
         const index = state.get('dataTable').indexOf(action.item);
         mutableState
           .update('dataTable', dataTable => dataTable.splice(index, 1))
-          .set('notifMsg', message ? message : notif.removed)
+          .set('notifMsg', message || notif.removed)
           .set('variant', 'success');
       });
     case `${branch}/${EDIT_ROW_FORM}`:
@@ -101,7 +101,7 @@ export default function reducer(state = initialImmutableState, action = {}) {
         mutableState
           .set('formValues', action.item)
           .set('editingId', action.item.get('id'))
-          .set('showFrm', true)
+          .set('showFrm', true);
       });
     case `${branch}/${CLOSE_NOTIF}`:
       return state.withMutations((mutableState) => {
@@ -109,8 +109,7 @@ export default function reducer(state = initialImmutableState, action = {}) {
       });
     case `${branch}/${ERROR_NOTIF}`:
       return state.withMutations((mutableState) => {
-        debugger
-        const message = action.message
+        const message = action.message;
         mutableState
           .set('notifMsg', message)
           .set('variant', 'error');

@@ -36,8 +36,12 @@ class RowReadOnly extends React.Component {
         if(itemCell.render !== undefined){
           renderedValue = itemCell.render(item.get(itemCell.name))
         }
+        let className = null;
+        if(itemCell.className){
+          className = itemCell.className(renderedValue)
+        }
         return (
-          <TableCell padding="none" key={index.toString()}>
+          <TableCell padding="none" key={index.toString()} className={className}>
             {renderedValue}
           </TableCell>
         );

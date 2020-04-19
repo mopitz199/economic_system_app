@@ -14,13 +14,11 @@ export const closeAction = branch => ({
   branch,
   type: `${branch}/${types.CLOSE_FORM}`
 });
-export const submitAction = (newData, branch) => {
-  return {
-    branch,
-    type: `${branch}/${types.SUBMIT_DATA}`,
-    newData
-  }
-};
+export const submitAction = (newData, branch) => ({
+  branch,
+  type: `${branch}/${types.SUBMIT_DATA}`,
+  newData
+});
 export const removeAction = (item, branch) => ({
   branch,
   type: `${branch}/${types.REMOVE_ROW_FORM}`,
@@ -35,11 +33,8 @@ export const closeNotifAction = branch => ({
   branch,
   type: `${branch}/${types.CLOSE_NOTIF}`,
 });
-export const errorNotifAction = (message, branch) => {
-  debugger
-  return {
-    branch,
-    type: `${branch}/${types.ERROR_NOTIF}`,
-    message
-  }
-};
+export const errorNotifAction = (message, branch) => ({
+  branch,
+  type: `${branch}/${types.ERROR_NOTIF}`,
+  message
+});

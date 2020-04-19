@@ -15,9 +15,11 @@ import {
   Tooltip,
   Button,
 } from '@material-ui/core';
+import { Grid, FormLabel, FormControlLabel, Radio, RadioGroup, Paper } from '@material-ui/core';
+import Icon from '@material-ui/core/Icon';
+
 import RowReadOnly from './RowReadOnly';
 import styles from './tableStyle-jss';
-
 
 class MainTableForm extends React.Component {
   render() {
@@ -50,6 +52,36 @@ class MainTableForm extends React.Component {
       }
       return false;
     });
+
+    const renderTable = (items) => {
+      if(items.size > 0){
+        return (
+          <Table className={classNames(css.tableCrud, classes.table, css.stripped)}>
+            <TableHead>
+              <TableRow>
+                { getHead(anchor) }
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {getItems(items)}
+            </TableBody>
+          </Table>
+        )
+      }else{
+        return (
+          <Grid
+            container
+            alignItems={"center"}
+            direction={"column"}
+            justify={"center"}
+          >
+            <Icon style={{'fontSize': '150px', 'color': 'gray'}}>equalizer</Icon>
+            <h1>There's no asset in your portfolio</h1>
+          </Grid>
+        )
+      }
+    }
+
     return (
       <div>
         <Toolbar className={classes.toolbar}>
@@ -67,16 +99,7 @@ class MainTableForm extends React.Component {
           </div>
         </Toolbar>
         <div className={classes.rootTable}>
-          <Table className={classNames(css.tableCrud, classes.table, css.stripped)}>
-            <TableHead>
-              <TableRow>
-                { getHead(anchor) }
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {getItems(items)}
-            </TableBody>
-          </Table>
+          {renderTable(items)}
         </div>
       </div>
     );

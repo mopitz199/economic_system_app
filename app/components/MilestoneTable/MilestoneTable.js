@@ -2,7 +2,8 @@
 import React from 'react';
 import MUIDataTable from 'mui-datatables';
 import classnames from 'classnames';
-import './index.css';
+
+import Type from 'ba-styles/Typography.scss';
 
 class AdvFilter extends React.Component {
 
@@ -27,12 +28,7 @@ class AdvFilter extends React.Component {
         name: 'Crisis 2000(%)',
         options: {
           setCellProps: (value) => {
-            return {
-              className: classnames({
-                'negativeNumber': value ? value.includes('-') : false,
-                'positiveNumber': value ? !value.includes('-') : false,
-              })
-            }
+            return this.percentageStyle(value)
           },
           customBodyRender: (value, tableMeta, updateValue) => {
             if(value){
@@ -47,12 +43,7 @@ class AdvFilter extends React.Component {
         name: 'Crisis 2008(%)',
         options: {
           setCellProps: (value) => {
-            return {
-              className: classnames({
-                'negativeNumber': value ? value.includes('-') : false,
-                'positiveNumber': value ? !value.includes('-') : false,
-              })
-            }
+            return this.percentageStyle(value)
           },
           customBodyRender: (value, tableMeta, updateValue) => {
             if(value){
@@ -67,12 +58,7 @@ class AdvFilter extends React.Component {
         name: 'Crisis COVID-19',
         options: {
           setCellProps: (value) => {
-            return {
-              className: classnames({
-                'negativeNumber': value ? value.includes('-') : false,
-                'positiveNumber': value ? !value.includes('-') : false,
-              })
-            }
+            return this.percentageStyle(value)
           },
           customBodyRender: (value, tableMeta, updateValue) => {
             if(value){
@@ -88,6 +74,19 @@ class AdvFilter extends React.Component {
       ['Bitcoin', 'BTC', 'Cryptos', null, null, null, 1000, -70],
       ['Apple', 'AAPL', 'Stocks', -30, 250, -40, 323, -20],
     ]
+  }
+
+  percentageStyle = (value) => {
+    let classes = {}
+    if(value){
+      if(value.includes('-')){
+        classes[Type.textError] = true
+      }
+      if(!value.includes('-')){
+        classes[Type.textSuccess] = true
+      }
+    }
+    return {className: classnames(classes)}
   }
 
   componentWillMount(){
