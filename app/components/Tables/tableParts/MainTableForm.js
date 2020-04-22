@@ -22,7 +22,7 @@ import Icon from '@material-ui/core/Icon';
 import RowReadOnly from './RowReadOnly';
 import styles from './tableStyle-jss';
 
-import EmptyIcon from '../../../EmptyIcon';
+import EmptyIcon from '../../CustomIcons/EmptyIcon';
 
 class MainTableForm extends React.Component {
   render() {

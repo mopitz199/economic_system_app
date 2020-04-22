@@ -3,102 +3,135 @@ import React from 'react';
 import MUIDataTable from 'mui-datatables';
 import classnames from 'classnames';
 import tableStyles from 'ba-styles/Table.scss';
-
+import {
+  Grid,
+  Typography,
+  Box,
+} from '@material-ui/core';
 import Type from 'ba-styles/Typography.scss';
+import CircularIndeterminate from './Loader';
+import EmptyIcon from '../CustomIcons/EmptyIcon';
+import {server, headers} from '../../constants';
+
+import './MilestoneTable.css';
 
 class AdvFilter extends React.Component {
 
-  state = {
-    columns: [
-      {
-        name: 'Name',
-      },
-      {
-        name: 'Symbol'
-      },
-      {
-        name: 'Type'
-      },
-      {
-        name: 'Sector'
-      },
-      {
-        name: 'Industry'
-      },
-      {
-        name: 'Crisis 2000(%)',
-        options: {
-          setCellProps: (value) => {
-            return this.percentageStyle(value)
-          },
-          customBodyRender: (value, tableMeta, updateValue) => {
-            if(value){
-              return `${value}%`
-            }else{
-              return value
+  constructor(props) {
+    super(props);
+    this.state = {
+      columns: [
+        {
+          name: 'Name',
+          options: {
+            filter: false,
+            sort: true,
+            setCellProps: () => ({className: classnames('cellPadding')})
+          }
+        },
+        {
+          name: 'Symbol',
+          options: {
+            filter: false,
+            sort: true,
+            setCellProps: () => ({className: classnames('cellPadding')})
+          }
+        },
+        {
+          name: 'Type',
+          options: {
+            setCellProps: () => ({className: classnames('cellPadding')})
+          }
+        },
+        {
+          name: 'Sector',
+          options: {
+            setCellProps: () => ({className: classnames('cellPadding')})
+          }
+        },
+        {
+          name: 'Industry',
+          options: {
+            setCellProps: () => ({className: classnames('cellPadding')})
+          }
+        },
+        {
+          name: 'Crisis 2000(%)',
+          options: {
+            filter: false,
+            sort: true,
+            setCellProps: (value) => {
+              return {
+                className: classnames(this.percentageStyle(value), 'cellPadding'),
+              }
+            },
+            customBodyRender: (value, tableMeta, updateValue) => {
+              if(value){
+                return `${value}%`
+              }else{
+                return value
+              }
             }
           }
-        }
-      },
-      {
-        name: 'Crisis 2008(%)',
-        options: {
-          setCellProps: (value) => {
-            return this.percentageStyle(value)
-          },
-          customBodyRender: (value, tableMeta, updateValue) => {
-            if(value){
-              return `${value}%`
-            }else{
-              return value
+        },
+        {
+          name: 'Crisis 2008(%)',
+          options: {
+            filter: false,
+            sort: true,
+            setCellProps: (value) => {
+              return {
+                className: classnames(this.percentageStyle(value), 'cellPadding'),
+              }
+            },
+            customBodyRender: (value, tableMeta, updateValue) => {
+              if(value){
+                return `${value}%`
+              }else{
+                return value
+              }
             }
           }
-        }
-      },
-      {
-        name: 'Crisis COVID-19',
-        options: {
-          setCellProps: (value) => {
-            return this.percentageStyle(value)
-          },
-          customBodyRender: (value, tableMeta, updateValue) => {
-            if(value){
-              return `${value}%`
-            }else{
-              return value
+        },
+        {
+          name: 'Crisis COVID-19',
+          options: {
+            filter: false,
+            sort: true,
+            setCellProps: (value) => {
+              return {
+                className: classnames(this.percentageStyle(value), 'cellPadding'),
+              }
+            },
+            customBodyRender: (value, tableMeta, updateValue) => {
+              if(value){
+                return `${value}%`
+              }else{
+                return value
+              }
             }
           }
-        }
-      },
-    ],
-    data: [
-      ['Bitcoin', 'BTC', 'Cryptos', null, null, null, 1000, -70],
-      ['Apple', 'AAPL', 'Stocks', -30, 250, -40, 323, -20],
-    ]
+        },
+      ],
+      data: []
+    }
   }
 
   percentageStyle = (value) => {
-    let classes = {}
     if(value){
       if(value.includes('-')){
-        classes[Type.textError] = true
+        return Type.textError
       }
       if(!value.includes('-')){
-        classes[Type.textSuccess] = true
+        return Type.textSuccess
       }
     }
-    return {className: classnames(classes)}
   }
 
   componentWillMount(){
     fetch(
-      'https://economicapp.io/api/chart/chart/milestones/',
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Token 26704736d3a5c8712dc149fb67643608f0397267'
-        }
-      }
+      `${server}/api/chart/chart/milestones/`,
+      {headers}
     )
       .then(res => res.json())
       .then(res => this.setState({
@@ -112,18 +145,44 @@ class AdvFilter extends React.Component {
       filterType: 'dropdown',
       responsive: 'stacked',
       print: true,
-      rowsPerPage: 10,
       page: 1,
+      rowsPerPageOptions: [10,50,100,200],
+      rowsPerPage: 200,
+      selectableRowsHeader: false,
+      disableToolbarSelect: true,
+      selectableRows: false,
+      setTableProps: () => {
+        return {
+          size: "small",
+        };
+      },
     };
-    return (
-      <MUIDataTable
-        title="Assets"
-        data={data}
-        className={classnames(tableStyles.small)}
-        columns={columns}
-        options={options}
-      />
-    );
+    if(data.length > 0){
+      return (
+        <MUIDataTable
+          title="Assets"
+          data={data}
+          className={classnames(tableStyles.small)}
+          columns={columns}
+          options={options}
+        />
+      );
+    }else{
+      return (
+        <Grid
+          container
+          alignItems={'center'}
+          direction={'column'}
+          justify={'center'}
+        >
+          <CircularIndeterminate />
+          <EmptyIcon size={200} />
+          <Box m={4}>
+            <Typography variant="h5" className={Type.regular}>We're loading all the data, It could take a while. Go for a cofee :D</Typography>
+          </Box>
+        </Grid>
+      )
+    }
   }
 }
 
