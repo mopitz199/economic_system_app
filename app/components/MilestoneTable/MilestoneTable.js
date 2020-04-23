@@ -22,6 +22,14 @@ class AdvFilter extends React.Component {
     this.state = {
       columns: [
         {
+          name: 'Id',
+          options: {
+            display: false,
+            filter: false,
+            sort: false,
+          }
+        },
+        {
           name: 'Name',
           options: {
             filter: false,
@@ -156,6 +164,11 @@ class AdvFilter extends React.Component {
           size: "small",
         };
       },
+      onRowClick: (row) => {
+        const assetId = row[0]
+        const assetUrl = `${window.location.origin}/app/asset/${assetId}`
+        window.open(assetUrl, "_blank")
+      }
     };
     if(data.length > 0){
       return (

@@ -90,3 +90,4 @@ export TemplateSettings from './TemplateSettings';
 // My App
 export MilestoneTable from './MilestoneTable/MilestoneTable';
 export PortfolioTable from './PortfolioTable/PortfolioTable';
+export AssetChart from './AssetChart/AssetChart';
