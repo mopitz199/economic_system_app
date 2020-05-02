@@ -54,7 +54,7 @@ const styles = ({
 });
 
 
-class CrudTbFormPortfolio extends Component {
+class PortfolioTable extends Component {
 
   constructor(props) {
     super(props);
@@ -210,6 +210,7 @@ class CrudTbFormPortfolio extends Component {
 
   deleteAssetPortfolio(data, removeRow, reducerName){
     const id = data.get('id')
+    debugger
     fetch(
       `${server}/api/asset/asset_portfolio/${id}`,
       {
@@ -327,7 +328,7 @@ class CrudTbFormPortfolio extends Component {
   }
 }
 
-CrudTbFormPortfolio.propTypes = {
+PortfolioTable.propTypes = {
   dataTable: PropTypes.object.isRequired,
   openForm: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired,
@@ -365,9 +366,9 @@ const mapDispatchToProps = dispatch => ({
   errorNotifAction: bindActionCreators(errorNotifAction, dispatch),
 });
 
-const CrudTbFormPortfolioMapped = connect(
+const PortfolioTableMapped = connect(
   mapStateToProps,
   mapDispatchToProps
-)(CrudTbFormPortfolio);
+)(PortfolioTable);
 
-export default withStyles(styles)(CrudTbFormPortfolioMapped);
+export default withStyles(styles)(PortfolioTableMapped);

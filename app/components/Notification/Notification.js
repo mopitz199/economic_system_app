@@ -55,7 +55,7 @@ function MySnackbarContent(props) {
     variant,
     ...other
   } = props;
-  const Icon = variantIcon[variant];
+  const Icon = variantIcon[variant?variant:'success'];
 
   return (
     <SnackbarContent

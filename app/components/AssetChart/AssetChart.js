@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles, ThemeProvider, useTheme } from '@material-ui/core/styles';
 import {
   LineChart,
   Line,
@@ -13,46 +13,61 @@ import {
   Brush,
 } from 'recharts';
 
-const styles = {
-  chartFluid: {
-    width: '100%',
-    height: 450
+const styles = theme => {
+  return {
+    chartFluid: {
+      width: '100%',
+      height: 450
+    }
   }
-};
+}
 
 function LineResponsive(props) {
   const { classes } = props;
+  const theme = useTheme();
   return (
-    <div className={classes.chartFluid}>
-      <ResponsiveContainer>
-        <LineChart
-          width={800}
-          height={450}
-          data={props.data}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5
-          }}
-        >
-          <XAxis
-            dataKey={(point) => {
-              return point.date
+    <ThemeProvider theme={theme}>
+      <div className={classes.chartFluid}>
+        <ResponsiveContainer>
+          <LineChart
+            width={800}
+            height={450}
+            data={props.data}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5
             }}
-          />
-          <YAxis
-            domain={['dataMin', 'dataMax']}
-            type="number"
-          />
-          <CartesianGrid strokeDasharray="3 3" />
-          <Tooltip />
-          <Legend />
-          <Brush dataKey="date" height={30} stroke="#8884d8" />
-          <Line type="monotone" dataKey="price" stroke="#8884d8" dot={false}/>
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
+          >
+            <XAxis
+              dataKey={(point) => {
+                return point.date
+              }}
+            />
+            <YAxis
+              domain={['dataMin', 'dataMax']}
+              type="number"
+            />
+            <CartesianGrid strokeDasharray="3 3" />
+            <Tooltip />
+            <Legend />
+            <Brush
+              dataKey="date"
+              height={30}
+              stroke={theme.palette.primary.dark}
+            />
+            <Line
+              type="monotone"
+              dataKey="price"
+              name="Price"
+              stroke={theme.palette.primary.dark}
+              dot={false}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </ThemeProvider>
   );
 }
 

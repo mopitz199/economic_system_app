@@ -15,7 +15,7 @@ import {server, headers} from '../../constants';
 
 import './MilestoneTable.css';
 
-class AdvFilter extends React.Component {
+class MilestoneTable extends React.Component {
 
   constructor(props) {
     super(props);
@@ -48,8 +48,11 @@ class AdvFilter extends React.Component {
         {
           name: 'Type',
           options: {
+            display: false,
+            filter: false,
+            sort: false,
             setCellProps: () => ({className: classnames('cellPadding')})
-          }
+          },
         },
         {
           name: 'Sector',
@@ -64,7 +67,7 @@ class AdvFilter extends React.Component {
           }
         },
         {
-          name: 'Crisis 2000(%)',
+          name: 'Deepest 2000',
           options: {
             filter: false,
             sort: true,
@@ -83,7 +86,7 @@ class AdvFilter extends React.Component {
           }
         },
         {
-          name: 'Crisis 2008(%)',
+          name: 'Deepest 2008',
           options: {
             filter: false,
             sort: true,
@@ -102,7 +105,7 @@ class AdvFilter extends React.Component {
           }
         },
         {
-          name: 'Crisis COVID-19',
+          name: 'Deepest COVID-19',
           options: {
             filter: false,
             sort: true,
@@ -138,7 +141,7 @@ class AdvFilter extends React.Component {
 
   componentWillMount(){
     fetch(
-      `${server}/api/chart/chart/milestones/`,
+      `${server}/api/chart/chart/milestones/?asset_type=${this.props.assetType}`,
       {headers}
     )
       .then(res => res.json())
@@ -199,4 +202,4 @@ class AdvFilter extends React.Component {
   }
 }
 
-export default AdvFilter;
+export default MilestoneTable;

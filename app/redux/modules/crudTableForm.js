@@ -89,7 +89,7 @@ export default function reducer(state = initialImmutableState, action = {}) {
     case `${branch}/${REMOVE_ROW_FORM}`:
       return state.withMutations((mutableState) => {
         const message = action.item.get('message');
-        const index = state.get('dataTable').indexOf(action.item);
+        const index = state.get('dataTable').toArray().findIndex(e => e.get('id')==action.item.get('id'))
         mutableState
           .update('dataTable', dataTable => dataTable.splice(index, 1))
           .set('notifMsg', message || notif.removed)
