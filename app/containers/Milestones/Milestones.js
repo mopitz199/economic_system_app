@@ -5,42 +5,39 @@ import { MilestoneTable } from 'components';
 import PapperBlock from '../../components/PapperBlock/PapperBlock';
 
 class SamplePage extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
-      assetType: ""
+      assetType: ''
     };
   }
 
   handleChange = event => {
-    this.setState({'assetType': event.target.value });
+    this.setState({ assetType: event.target.value });
   };
 
-  selectRender = () => {
-    return (
-      <Box display="flex" justifyContent="center">
-        <FormControl>
-          <InputLabel htmlFor="asset-type">Asset Type</InputLabel>
-          <Select
-            value={this.state.assetType}
-            onChange={this.handleChange}
-            input={<Input name="assetType" id="asset-type" />}
-          >
-            <MenuItem value="">
-              <em>----</em>
-            </MenuItem>
-            <MenuItem value={'stocks'}>Stocks</MenuItem>
-            <MenuItem value={'futures'}>Futures</MenuItem>
-            <MenuItem value={'cryptos'}>Cryptos</MenuItem>
-            <MenuItem value={'etf'}>ETF</MenuItem>
-            <MenuItem value={'currencies'}>Currencies</MenuItem>
-          </Select>
-          <FormHelperText>Choose the asset type that you would like to check</FormHelperText>
-        </FormControl>
-      </Box>
-    )
-  }
+  selectRender = () => (
+    <Box display="flex" justifyContent="center">
+      <FormControl>
+        <InputLabel htmlFor="asset-type">Asset Type</InputLabel>
+        <Select
+          value={this.state.assetType}
+          onChange={this.handleChange}
+          input={<Input name="assetType" id="asset-type" />}
+        >
+          <MenuItem value="">
+            <em>----</em>
+          </MenuItem>
+          <MenuItem value="stocks">Stocks</MenuItem>
+          <MenuItem value="futures">Futures</MenuItem>
+          <MenuItem value="cryptos">Cryptos</MenuItem>
+          <MenuItem value="etf">ETF</MenuItem>
+          <MenuItem value="currencies">Currencies</MenuItem>
+        </Select>
+        <FormHelperText>Choose the asset type that you would like to check</FormHelperText>
+      </FormControl>
+    </Box>
+  )
 
   render() {
     const title = 'Milestones';

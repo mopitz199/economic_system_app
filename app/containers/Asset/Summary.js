@@ -13,10 +13,10 @@ const styles = theme => ({
     opacity: 0.7,
     fontSize: 84
   }
-})
+});
 
-function Summary(props){
-  const {classes} = props
+function Summary(props) {
+  const { classes } = props;
   return (
     <Grid container spacing={2}>
       <Grid item md={3}>
@@ -24,12 +24,12 @@ function Summary(props){
           color={colorfull[0]}
           start={0}
           end={props.performance.price}
-          preAppendText={'$'}
+          preAppendText="$"
           duration={3}
           decimals={props.performance.num_decimals}
           title="Price"
         >
-          <MonetizationOnIcon className={classes.counterIcon}/>
+          <MonetizationOnIcon className={classes.counterIcon} />
         </CounterWidget>
       </Grid>
       <Grid item md={3}>
@@ -37,12 +37,12 @@ function Summary(props){
           color={colorfull[1]}
           start={0}
           end={props.performance.historical_max_price}
-          preAppendText={'$'}
+          preAppendText="$"
           duration={3}
           decimals={props.performance.num_decimals}
           title="Historical Max"
         >
-          <MonetizationOnIcon className={classes.counterIcon}/>
+          <MonetizationOnIcon className={classes.counterIcon} />
         </CounterWidget>
       </Grid>
       <Grid item md={2}>
@@ -50,14 +50,14 @@ function Summary(props){
           color={colorfull[2]}
           start={0}
           end={props.performance.day_performance}
-          appendText={'%'}
+          appendText="%"
           duration={3}
           decimals={props.day_performance_num_integers == 3 ? 1 : 2}
           title="24 Hour"
         >
           {props.performance.day_performance < 0
-            ? <TrendingDown className={classes.counterIcon}/>
-            : <TrendingUp className={classes.counterIcon}/>
+            ? <TrendingDown className={classes.counterIcon} />
+            : <TrendingUp className={classes.counterIcon} />
           }
         </CounterWidget>
       </Grid>
@@ -66,14 +66,14 @@ function Summary(props){
           color={colorfull[3]}
           start={0}
           end={props.performance.weekly_performance}
-          appendText={'%'}
+          appendText="%"
           duration={3}
           decimals={props.performance.weekly_performance_num_integers == 3 ? 1 : 2}
           title="Week"
         >
           {props.performance.weekly_performance < 0
-            ? <TrendingDown className={classes.counterIcon}/>
-            : <TrendingUp className={classes.counterIcon}/>
+            ? <TrendingDown className={classes.counterIcon} />
+            : <TrendingUp className={classes.counterIcon} />
           }
         </CounterWidget>
       </Grid>
@@ -82,19 +82,19 @@ function Summary(props){
           color={colorfull[4]}
           start={0}
           end={props.performance.monthly_performance}
-          appendText={'%'}
+          appendText="%"
           duration={3}
           decimals={props.monthly_performance_num_integers == 3 ? 1 : 2}
           title="Monthly"
         >
           {props.performance.monthly_performance < 0
-            ? <TrendingDown className={classes.counterIcon}/>
-            : <TrendingUp className={classes.counterIcon}/>
+            ? <TrendingDown className={classes.counterIcon} />
+            : <TrendingUp className={classes.counterIcon} />
           }
         </CounterWidget>
       </Grid>
     </Grid>
-  )
+  );
 }
 
 export default withStyles(styles)(Summary);
