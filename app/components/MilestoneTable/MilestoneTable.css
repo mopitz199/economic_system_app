@@ -1,3 +1,10 @@
 .cellPadding{
   padding: 5px 16px !important;
 }
+th svg{
+  color:#5f5f63;
+  margin-top: 1px !important;
+}
+.arrow-milestone-box svg{
+  margin-top: -2px !important;
+}

@@ -9,7 +9,7 @@ class SamplePage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      assetType: null
+      assetType: ""
     };
   }
 
@@ -56,10 +56,7 @@ class SamplePage extends React.Component {
           <meta property="twitter:description" content={description} />
         </Helmet>
         <PapperBlock title="Milestones" desc="The section where you can check the behavior of all the assets during some special periods">
-          {this.state.assetType
-            ? <MilestoneTable assetType={this.state.assetType}/>
-            : this.selectRender()
-          }
+          <MilestoneTable />
         </PapperBlock>
       </div>
     );

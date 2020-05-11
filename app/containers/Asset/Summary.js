@@ -39,6 +39,7 @@ function Summary(props){
           end={props.performance.historical_max_price}
           preAppendText={'$'}
           duration={3}
+          decimals={props.performance.num_decimals}
           title="Historical Max"
         >
           <MonetizationOnIcon className={classes.counterIcon}/>
