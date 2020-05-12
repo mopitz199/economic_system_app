@@ -23,6 +23,19 @@ const styles = theme => {
     th: {
       cursor: 'pointer',
       padding: '16px',
+    },
+    milestoneArrowIcon:{
+      marginBottom: '-6px',
+      marginLeft: '-8px'
+    },
+    redIcon: {
+      color: 'red',
+    },
+    greenIcon: {
+      color: 'green',
+    },
+    milestoneAdjetiveText:{
+      marginLeft: '-3px'
     }
   }
 }
@@ -42,30 +55,36 @@ function MilestoneCustomHeader(props){
                   <Box>
                     <Icon
                       fontSize="default"
-                      style={{
-                        color: 'red',
-                        marginBottom: '-6px',
-                        marginLeft: '-8px'
-                      }}
+                      className={classnames(
+                        props.classes.milestoneArrowIcon,
+                        props.classes.redIcon
+                      )}
                     >
                         arrow_drop_down
                     </Icon>
-                    <span style={{marginLeft: '-3px'}}>Down</span>
+                    <span
+                      className={classnames(props.classes.milestoneAdjetiveText)}
+                    >
+                      Down
+                    </span>
                   </Box>
                 )
               : (
                 <Box>
                   <Icon
                     fontSize="default"
-                    style={{
-                      color: 'green',
-                      marginBottom: '-6px',
-                      marginLeft: '-8px'
-                    }}
+                    className={classnames(
+                      props.classes.milestoneArrowIcon,
+                      props.classes.greenIcon
+                    )}
                   >
                       arrow_drop_up
                   </Icon>
-                  <span style={{marginLeft: '-3px'}}>Up</span>
+                  <span
+                    className={classnames(props.classes.milestoneAdjetiveText)}
+                  >
+                    Up
+                  </span>
                 </Box>
               )
             }

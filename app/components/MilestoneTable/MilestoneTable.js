@@ -5,13 +5,8 @@ import MUIDataTable from 'mui-datatables';
 import classnames from 'classnames';
 import Cookies from 'universal-cookie';
 import tableStyles from 'ba-styles/Table.scss';
-import {
-  Grid,
-  Typography,
-  Box,
-} from '@material-ui/core';
 import Type from 'ba-styles/Typography.scss';
-import CircularIndeterminate from './Loader';
+import Loader from './Loader';
 import CustomHeader from './CustomHeader';
 import MilestoneCustomHeader from './MilestoneCustomHeader';
 import EmptyIcon from '../CustomIcons/EmptyIcon';
@@ -30,7 +25,7 @@ const styles = theme => {
       minWidth: '200px'
     },
     minWidthMilestone: {
-      minWidth: '200px'
+      minWidth: '180px'
     },
     customHead: {
       borderSpacing: '0',
@@ -54,6 +49,7 @@ class MilestoneTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: true,
       columns: [
         {
           name: 'Id',
@@ -150,9 +146,13 @@ class MilestoneTable extends React.Component {
       ],
       options: {
         announceText: "",
-        filterType: 'dropdown',
         filter: true,
+        filterType: 'dropdown',
         responsive: 'scrollMaxHeight',
+        fixedHeaderOptions: {
+          xAxis: true,
+          yAxis: true
+        },
         //responsive: 'stacked',
         data: [],
         displayData: [],
@@ -297,6 +297,38 @@ class MilestoneTable extends React.Component {
     return columns
   }
 
+  getMilestoneColumn = (name, description) => {
+    return {
+      name: name,
+      options: {
+        hint: description,
+        filter: false,
+        sort: true,
+        display: false,
+        sortDirection: 'none',
+        setCellProps: (value) => {
+          return {
+            className: classnames(
+              this.percentageStyle(value),
+              this.props.classes.cellPadding,
+              this.props.classes.minWidthMilestone
+            ),
+          }
+        },
+        customHeadRender: ({index, name,...column}, sortColumn) => {
+          return <MilestoneCustomHeader key={index} index={index} name={name} column={column} sortColumn={sortColumn}/>
+        },
+        customBodyRender: (value, tableMeta, updateValue) => {
+          if(value){
+            return `${value}%`
+          }else{
+            return value
+          }
+        }
+      }
+    }
+  }
+
   componentWillMount(){
     this.getData(this.state.options)
       .then(res => {
@@ -309,36 +341,7 @@ class MilestoneTable extends React.Component {
           }else{
             description = 'The biggest up in the respective period'
           }
-
-          newColumns.push({
-            name: name,
-            options: {
-              hint: description,
-              filter: false,
-              sort: true,
-              display: true,
-              sortDirection: 'none',
-              setCellProps: (value) => {
-                return {
-                  className: classnames(
-                    this.percentageStyle(value),
-                    this.props.classes.cellPadding,
-                    this.props.classes.minWidthMilestone
-                  ),
-                }
-              },
-              customHeadRender: ({index, name,...column}, sortColumn) => {
-                return <MilestoneCustomHeader key={index} index={index} name={name} column={column} sortColumn={sortColumn}/>
-              },
-              customBodyRender: (value, tableMeta, updateValue) => {
-                if(value){
-                  return `${value}%`
-                }else{
-                  return value
-                }
-              }
-            }
-          })
+          newColumns.push(this.getMilestoneColumn(name, description))
         })
 
         newOptions['data'] = res['results']['data'],
@@ -346,12 +349,12 @@ class MilestoneTable extends React.Component {
         this.setState({
           'options': newOptions,
           'columns': this.setFilterList(res, this.state.columns),
+          'loading': false,
         })
       })
   }
 
   render() {
-    console.log('Im rendering')
     const options = {
       ...this.state.options,
       setRowProps: (row ,index) => {
@@ -438,19 +441,25 @@ class MilestoneTable extends React.Component {
           const cookies = new Cookies();
           cookies.set('text', tableOptions.searchText, { path: '/' });          
         }
-
-        console.log(action, tableOptions);
+        // console.log(action, tableOptions);
       }
     };
-    return (
-      <MUIDataTable
-        title="Assets"
-        data={this.state.options.data}
-        className={classnames(tableStyles.small)}
-        columns={this.state.columns}
-        options={options}
-      />
-    );
+
+    if(this.state.loading){
+      return (
+        <Loader height={400} />
+      )
+    }else{
+      return (
+        <MUIDataTable
+          title="Assets"
+          data={this.state.options.data}
+          className={classnames(tableStyles.small)}
+          columns={this.state.columns}
+          options={options}
+        />
+      );
+    }
   }
 }
 

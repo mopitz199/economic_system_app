@@ -41,7 +41,7 @@ class SamplePage extends React.Component {
 
   render() {
     const title = 'Milestones';
-    const description = 'The section where you can chekc the behavior of all the assets during some special periods';
+    const description = 'The section where you can check the behavior of all the assets during some special periods. In the right top of the table you can display of the milestone available.';
     return (
       <div>
         <Helmet>
@@ -52,7 +52,7 @@ class SamplePage extends React.Component {
           <meta property="twitter:title" content={title} />
           <meta property="twitter:description" content={description} />
         </Helmet>
-        <PapperBlock title="Milestones" desc="The section where you can check the behavior of all the assets during some special periods">
+        <PapperBlock title="Milestones" desc="The section where you can check the behavior of all the assets during some special periods. In the right top of the table you can display of the milestone available.">
           <MilestoneTable />
         </PapperBlock>
       </div>

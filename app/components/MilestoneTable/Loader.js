@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+import classnames from 'classnames';
 import { purple } from '@material-ui/core/colors';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress, Box } from '@material-ui/core';
 
 const styles = theme => ({
   progress: {
@@ -13,7 +14,17 @@ const styles = theme => ({
 function CircularIndeterminate(props) {
   const { classes } = props;
   return (
-    <CircularProgress className={classes.progress} size={50} />
+    <Box
+      style={{height: `${props.height}px`}}
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <CircularProgress
+        className={classnames(classes.progress)}
+        size={50}
+      />
+    </Box>
   );
 }
 
