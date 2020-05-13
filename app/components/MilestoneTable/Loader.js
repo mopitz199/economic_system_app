@@ -15,7 +15,7 @@ function CircularIndeterminate(props) {
   const { classes } = props;
   return (
     <Box
-      style={{height: `${props.height}px`}}
+      style={{ height: `${props.height}px` }}
       display="flex"
       alignItems="center"
       justifyContent="center"

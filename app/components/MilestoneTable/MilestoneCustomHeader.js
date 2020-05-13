@@ -40,7 +40,24 @@ const styles = theme => {
   }
 }
 
+function splitName(name){
+  if(name.includes("Down")){
+    return {
+      "firstPart": "Down",
+      "secondPart": name.split("Down ")[1]
+    }
+  }else if(name.includes("Up")){
+    return {
+      "firstPart": "Up",
+      "secondPart": name.split("Up ")[1]
+    }
+  }else{
+    return null
+  }
+}
+
 function MilestoneCustomHeader(props){
+  const nameData = splitName(props.name)
   return (
     <th
       onClick={() => props.sortColumn(props.index)}
@@ -65,7 +82,7 @@ function MilestoneCustomHeader(props){
                     <span
                       className={classnames(props.classes.milestoneAdjetiveText)}
                     >
-                      Down
+                      {nameData.firstPart}
                     </span>
                   </Box>
                 )
@@ -83,14 +100,14 @@ function MilestoneCustomHeader(props){
                   <span
                     className={classnames(props.classes.milestoneAdjetiveText)}
                   >
-                    Up
+                    {nameData.firstPart}
                   </span>
                 </Box>
               )
             }
           </Box>
           <Box style={{marginTop: '-6px'}}>
-            <span>{props.name}</span>
+            <span>{nameData.secondPart}</span>
             {props.column.hint
               ? (
                 <Tooltip title={props.column.hint}>
