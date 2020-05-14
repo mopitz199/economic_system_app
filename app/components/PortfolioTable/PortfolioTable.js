@@ -86,6 +86,7 @@ class PortfolioTable extends Component {
     data.map((assetPortfolio) => {
       let asset = assetPortfolio.asset
       let performance = assetPortfolio.performance
+      let earnings = assetPortfolio.earnings
       finalData.push({
         id: assetPortfolio.id,
         asset: JSON.stringify({
@@ -98,6 +99,7 @@ class PortfolioTable extends Component {
         purchase_value: assetPortfolio.purchase_price,
         current_value: assetPortfolio.current_price,
         performance: performance,
+        earnings: earnings,
       })
     })
     return finalData;

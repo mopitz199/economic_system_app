@@ -76,9 +76,22 @@ export const anchorTable = [
     label: 'Performance',
     initialValue: '',
     hidden: false,
+    render: (earnings) => {
+      if (earnings) {
+        return `${earnings}%`;
+      }
+      return earnings;
+    },
+    className: (value) => percentageStyle(value)
+  },
+  {
+    name: 'earnings',
+    label: 'Earnings',
+    initialValue: '',
+    hidden: false,
     render: (performance) => {
       if (performance) {
-        return `${performance}%`;
+        return `$${performance}`;
       }
       return performance;
     },
