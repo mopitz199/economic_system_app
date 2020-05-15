@@ -22,7 +22,7 @@ import { CrudTableForm, Notification } from 'components';
 import { Paper } from '@material-ui/core';
 
 import PortfolioSearch from './PortfolioSearch';
-import { anchorTable } from './sampleData';
+import { anchorTable } from './PortfolioColumns';
 import {server, headers} from '../../constants';
 
 const branch = 'crudTbFrmPortfolio';

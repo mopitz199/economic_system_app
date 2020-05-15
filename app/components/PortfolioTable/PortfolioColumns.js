@@ -1,3 +1,4 @@
+import React, { Component } from 'react';
 import classnames from 'classnames';
 import Type from 'ba-styles/Typography.scss';
 
@@ -28,7 +29,17 @@ export const anchorTable = [
     hidden: false,
     render: (option) => {
       const val = JSON.parse(option);
-      return val.name;
+      return (
+        <span
+          style={{cursor: 'pointer'}}
+          onClick={() => {
+            const assetUrl = `${window.location.origin}/app/asset/${val.id}`
+            window.open(assetUrl, "_blank")
+          }}
+        >
+          {val.name}
+        </span>
+      );
     }
   },
   {
