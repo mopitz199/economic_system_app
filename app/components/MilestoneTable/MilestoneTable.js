@@ -44,6 +44,23 @@ const styles = theme => {
 }
 
 
+function getColor(value){
+  if(0<=value && value<20){
+    return "#f44336"
+  }else if(20<=value && value<40){
+    return "#f48636"
+  }else if(40<=value && value<60){
+    return "#b5a529"
+  }else if(60<=value && value<80){
+    return "#7ab902"
+  }else if(80<=value && value<=100){
+    return "#1eb304"
+  }else{
+
+  }
+}
+
+
 class MilestoneTable extends React.Component {
 
   constructor(props) {
@@ -138,6 +155,32 @@ class MilestoneTable extends React.Component {
                 this.props.classes.minWidth
               )
             }),
+            customHeadRender: ({index, name,...column}, sortColumn) => (
+              <CustomHeader key={index} index={index} name={name} column={column} sortColumn={sortColumn}/>
+            )
+          }
+        },
+        {
+          name: 'Healthy',
+          sortDirection: 'none',
+          options: {
+            setCellProps: (percentageValue) => {
+              percentageValue = percentageValue.replace("%", "")
+              return {
+                className: classnames(
+                  this.props.classes.cellPadding,
+                  this.props.classes.minWidth
+                ),
+                style: {'color': getColor(parseFloat(percentageValue))}
+              }
+            },
+            customBodyRender: (value, tableMeta, updateValue) => {
+              if(value!=null){
+                return `${Math.round(value*100)}%`
+              }else{
+                return value
+              }
+            },
             customHeadRender: ({index, name,...column}, sortColumn) => (
               <CustomHeader key={index} index={index} name={name} column={column} sortColumn={sortColumn}/>
             )
