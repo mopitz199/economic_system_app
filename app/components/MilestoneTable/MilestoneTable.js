@@ -61,157 +61,312 @@ function getColor(value){
 }
 
 
+const initColumns = [
+  {
+    name: 'Id',
+    options: {
+      viewColumns: false,
+      display: false,
+      filter: false,
+      sort: false,
+    }
+  },
+  {
+    name: 'Name',
+    options: {
+      filter: false,
+      sort: true,
+      sortDirection: 'none',
+      setCellProps: () => ({
+        className: classnames(
+          this.props.classes.cellPadding,
+          this.props.classes.clickableCell,
+          this.props.classes.minWidth
+        )
+      }),
+      customHeadRender: ({index, name,...column}, sortColumn) => (
+        <CustomHeader key={index} index={index} name={name} column={column} sortColumn={sortColumn}/>
+      )
+    }
+  },
+  {
+    name: 'Symbol',
+    options: {
+      filter: false,
+      sort: true,
+      sortDirection: 'none',
+      setCellProps: () => ({
+        className: classnames(
+          this.props.classes.cellPadding,
+          this.props.classes.minWidth
+        )
+      }),
+      customHeadRender: ({index, name,...column}, sortColumn) => (
+        <CustomHeader key={index} index={index} name={name} column={column} sortColumn={sortColumn}/>
+      )
+    }
+  },
+  {
+    name: 'Type',
+    options: {
+      viewColumns: true,
+      display: false,
+      filter: true,
+      sort: false,
+      setCellProps: () => ({
+        className: classnames(
+          this.props.classes.cellPadding,
+          this.props.classes.minWidth
+        )
+      }),
+      customHeadRender: ({index, name,...column}, sortColumn) => (
+        <CustomHeader key={index} index={index} name={name} column={column} sortColumn={sortColumn}/>
+      )
+    },
+  },
+  {
+    name: 'Sector',
+    sortDirection: 'none',
+    options: {
+      setCellProps: () => ({
+        className: classnames(
+          this.props.classes.cellPadding,
+          this.props.classes.minWidth
+        )
+      }),
+      customHeadRender: ({index, name,...column}, sortColumn) => (
+        <CustomHeader key={index} index={index} name={name} column={column} sortColumn={sortColumn}/>
+      )
+    }
+  },
+  {
+    name: 'Industry',
+    sortDirection: 'none',
+    options: {
+      setCellProps: () => ({
+        className: classnames(
+          this.props.classes.cellPadding,
+          this.props.classes.minWidth
+        )
+      }),
+      customHeadRender: ({index, name,...column}, sortColumn) => (
+        <CustomHeader key={index} index={index} name={name} column={column} sortColumn={sortColumn}/>
+      )
+    }
+  },
+  {
+    name: 'Healthy',
+    sortDirection: 'none',
+    options: {
+      filter: false,
+      hint: "How consistent is the chart during long periods",
+      setCellProps: (percentageValue) => {
+        percentageValue = percentageValue.replace("%", "")
+        return {
+          className: classnames(
+            this.props.classes.cellPadding,
+            this.props.classes.minWidth
+          ),
+          style: {'color': getColor(parseFloat(percentageValue))}
+        }
+      },
+      customBodyRender: (value, tableMeta, updateValue) => {
+        if(value!=null){
+          return `${Math.round(value*100)}%`
+        }else{
+          return value
+        }
+      },
+      customHeadRender: ({index, name,...column}, sortColumn) => (
+        <CustomHeader key={index} index={index} name={name} column={column} sortColumn={sortColumn}/>
+      )
+    }
+  }
+]
+const initOptions = {
+  announceText: "",
+  filter: true,
+  filterType: 'dropdown',
+  responsive: 'scrollMaxHeight',
+  fixedHeaderOptions: {
+    xAxis: true,
+    yAxis: true
+  },
+  //responsive: 'stacked',
+  data: [],
+  displayData: [],
+  print: true,
+  page: 0,
+  filterList: [[], [], [], [], [], [], [], [],[]],
+  serverSideFilterList: [],
+  serverSide: true,
+  count: null,
+  rowsPerPage: 20,
+  rowsPerPageOptions: [20,50,100,200],
+  selectableRowsHeader: false,
+  disableToolbarSelect: true,
+  selectableRows: false,
+  searchText: "",
+}
+
+
 class MilestoneTable extends React.Component {
+
+  initColumns = [
+    {
+      name: 'Id',
+      options: {
+        viewColumns: false,
+        display: false,
+        filter: false,
+        sort: false,
+      }
+    },
+    {
+      name: 'Name',
+      options: {
+        filter: false,
+        sort: true,
+        sortDirection: 'none',
+        setCellProps: () => ({
+          className: classnames(
+            this.props.classes.cellPadding,
+            this.props.classes.clickableCell,
+            this.props.classes.minWidth
+          )
+        }),
+        customHeadRender: ({index, name,...column}, sortColumn) => (
+          <CustomHeader key={index} index={index} name={name} column={column} sortColumn={sortColumn}/>
+        )
+      }
+    },
+    {
+      name: 'Symbol',
+      options: {
+        filter: false,
+        sort: true,
+        sortDirection: 'none',
+        setCellProps: () => ({
+          className: classnames(
+            this.props.classes.cellPadding,
+            this.props.classes.minWidth
+          )
+        }),
+        customHeadRender: ({index, name,...column}, sortColumn) => (
+          <CustomHeader key={index} index={index} name={name} column={column} sortColumn={sortColumn}/>
+        )
+      }
+    },
+    {
+      name: 'Type',
+      options: {
+        viewColumns: true,
+        display: false,
+        filter: true,
+        sort: false,
+        setCellProps: () => ({
+          className: classnames(
+            this.props.classes.cellPadding,
+            this.props.classes.minWidth
+          )
+        }),
+        customHeadRender: ({index, name,...column}, sortColumn) => (
+          <CustomHeader key={index} index={index} name={name} column={column} sortColumn={sortColumn}/>
+        )
+      },
+    },
+    {
+      name: 'Sector',
+      sortDirection: 'none',
+      options: {
+        setCellProps: () => ({
+          className: classnames(
+            this.props.classes.cellPadding,
+            this.props.classes.minWidth
+          )
+        }),
+        customHeadRender: ({index, name,...column}, sortColumn) => (
+          <CustomHeader key={index} index={index} name={name} column={column} sortColumn={sortColumn}/>
+        )
+      }
+    },
+    {
+      name: 'Industry',
+      sortDirection: 'none',
+      options: {
+        setCellProps: () => ({
+          className: classnames(
+            this.props.classes.cellPadding,
+            this.props.classes.minWidth
+          )
+        }),
+        customHeadRender: ({index, name,...column}, sortColumn) => (
+          <CustomHeader key={index} index={index} name={name} column={column} sortColumn={sortColumn}/>
+        )
+      }
+    },
+    {
+      name: 'Healthy',
+      sortDirection: 'none',
+      options: {
+        filter: false,
+        hint: "How consistent is the chart during long periods",
+        setCellProps: (percentageValue) => {
+          percentageValue = percentageValue.replace("%", "")
+          return {
+            className: classnames(
+              this.props.classes.cellPadding,
+              this.props.classes.minWidth
+            ),
+            style: {'color': getColor(parseFloat(percentageValue))}
+          }
+        },
+        customBodyRender: (value, tableMeta, updateValue) => {
+          if(value!=null){
+            return `${Math.round(value*100)}%`
+          }else{
+            return value
+          }
+        },
+        customHeadRender: ({index, name,...column}, sortColumn) => (
+          <CustomHeader key={index} index={index} name={name} column={column} sortColumn={sortColumn}/>
+        )
+      }
+    }
+  ]
+
+  initOptions = {
+    announceText: "",
+    filter: true,
+    filterType: 'dropdown',
+    responsive: 'scrollMaxHeight',
+    fixedHeaderOptions: {
+      xAxis: true,
+      yAxis: true
+    },
+    //responsive: 'stacked',
+    data: [],
+    displayData: [],
+    print: true,
+    page: 0,
+    filterList: [[], [], [], [], [], [], [], [],[]],
+    serverSideFilterList: [],
+    serverSide: true,
+    count: null,
+    rowsPerPage: 20,
+    rowsPerPageOptions: [20,50,100,200],
+    selectableRowsHeader: false,
+    disableToolbarSelect: true,
+    selectableRows: false,
+    searchText: "",
+  }
 
   constructor(props) {
     super(props);
     this.state = {
       loading: true,
-      columns: [
-        {
-          name: 'Id',
-          options: {
-            viewColumns: false,
-            display: false,
-            filter: false,
-            sort: false,
-          }
-        },
-        {
-          name: 'Name',
-          options: {
-            filter: false,
-            sort: true,
-            sortDirection: 'none',
-            setCellProps: () => ({
-              className: classnames(
-                this.props.classes.cellPadding,
-                this.props.classes.clickableCell,
-                this.props.classes.minWidth
-              )
-            }),
-            customHeadRender: ({index, name,...column}, sortColumn) => (
-              <CustomHeader key={index} index={index} name={name} column={column} sortColumn={sortColumn}/>
-            )
-          }
-        },
-        {
-          name: 'Symbol',
-          options: {
-            filter: false,
-            sort: true,
-            sortDirection: 'none',
-            setCellProps: () => ({
-              className: classnames(
-                this.props.classes.cellPadding,
-                this.props.classes.minWidth
-              )
-            }),
-            customHeadRender: ({index, name,...column}, sortColumn) => (
-              <CustomHeader key={index} index={index} name={name} column={column} sortColumn={sortColumn}/>
-            )
-          }
-        },
-        {
-          name: 'Type',
-          options: {
-            viewColumns: true,
-            display: false,
-            filter: true,
-            sort: false,
-            setCellProps: () => ({
-              className: classnames(
-                this.props.classes.cellPadding,
-                this.props.classes.minWidth
-              )
-            }),
-            customHeadRender: ({index, name,...column}, sortColumn) => (
-              <CustomHeader key={index} index={index} name={name} column={column} sortColumn={sortColumn}/>
-            )
-          },
-        },
-        {
-          name: 'Sector',
-          sortDirection: 'none',
-          options: {
-            setCellProps: () => ({
-              className: classnames(
-                this.props.classes.cellPadding,
-                this.props.classes.minWidth
-              )
-            }),
-            customHeadRender: ({index, name,...column}, sortColumn) => (
-              <CustomHeader key={index} index={index} name={name} column={column} sortColumn={sortColumn}/>
-            )
-          }
-        },
-        {
-          name: 'Industry',
-          sortDirection: 'none',
-          options: {
-            setCellProps: () => ({
-              className: classnames(
-                this.props.classes.cellPadding,
-                this.props.classes.minWidth
-              )
-            }),
-            customHeadRender: ({index, name,...column}, sortColumn) => (
-              <CustomHeader key={index} index={index} name={name} column={column} sortColumn={sortColumn}/>
-            )
-          }
-        },
-        {
-          name: 'Healthy',
-          sortDirection: 'none',
-          options: {
-            setCellProps: (percentageValue) => {
-              percentageValue = percentageValue.replace("%", "")
-              return {
-                className: classnames(
-                  this.props.classes.cellPadding,
-                  this.props.classes.minWidth
-                ),
-                style: {'color': getColor(parseFloat(percentageValue))}
-              }
-            },
-            customBodyRender: (value, tableMeta, updateValue) => {
-              if(value!=null){
-                return `${Math.round(value*100)}%`
-              }else{
-                return value
-              }
-            },
-            customHeadRender: ({index, name,...column}, sortColumn) => (
-              <CustomHeader key={index} index={index} name={name} column={column} sortColumn={sortColumn}/>
-            )
-          }
-        },
-      ],
-      options: {
-        announceText: "",
-        filter: true,
-        filterType: 'dropdown',
-        responsive: 'scrollMaxHeight',
-        fixedHeaderOptions: {
-          xAxis: true,
-          yAxis: true
-        },
-        //responsive: 'stacked',
-        data: [],
-        displayData: [],
-        print: true,
-        page: 0,
-        filterList: [[], [], [], [], [], [], [], [],[]],
-        serverSideFilterList: [],
-        serverSide: true,
-        count: null,
-        rowsPerPage: 20,
-        rowsPerPageOptions: [20,50,100,200],
-        selectableRowsHeader: false,
-        disableToolbarSelect: true,
-        selectableRows: false,
-        searchText: "",
-      }
+      columns: this.initColumns,
+      options: this.initOptions
     }
   }
 
@@ -468,6 +623,13 @@ class MilestoneTable extends React.Component {
           const newColumns = this.setDisplayColumn(tableOptions)
           this.setState({'columns': newColumns})
         }
+
+        if(action == 'resetFilters'){
+          this.setState({
+            'columns': this.initColumns,
+            'options': this.initOptions,
+          })
+        }
         
         
         if(action == 'search'){
@@ -484,7 +646,7 @@ class MilestoneTable extends React.Component {
           const cookies = new Cookies();
           cookies.set('text', tableOptions.searchText, { path: '/' });          
         }
-        // console.log(action, tableOptions);
+        console.log(action, tableOptions);
       }
     };
 

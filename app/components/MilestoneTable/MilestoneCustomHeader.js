@@ -67,44 +67,22 @@ function MilestoneCustomHeader(props){
       <Box display="flex" className={classnames(props.classes.customHead)}>
         <Box>
           <Box>
-            {props.index % 2 == 0
-              ? (
-                  <Box>
-                    <Icon
-                      fontSize="default"
-                      className={classnames(
-                        props.classes.milestoneArrowIcon,
-                        props.classes.redIcon
-                      )}
-                    >
-                        arrow_drop_down
-                    </Icon>
-                    <span
-                      className={classnames(props.classes.milestoneAdjetiveText)}
-                    >
-                      {nameData.firstPart}
-                    </span>
-                  </Box>
-                )
-              : (
-                <Box>
-                  <Icon
-                    fontSize="default"
-                    className={classnames(
-                      props.classes.milestoneArrowIcon,
-                      props.classes.greenIcon
-                    )}
-                  >
-                      arrow_drop_up
-                  </Icon>
-                  <span
-                    className={classnames(props.classes.milestoneAdjetiveText)}
-                  >
-                    {nameData.firstPart}
-                  </span>
-                </Box>
-              )
-            }
+            <Box>
+              <Icon
+                fontSize="default"
+                className={classnames(
+                  props.classes.milestoneArrowIcon,
+                  nameData.firstPart=="Down" ? props.classes.redIcon : props.classes.greenIcon
+                )}
+              >
+                {nameData.firstPart=="Down" ? "arrow_drop_down" : "arrow_drop_up"}
+              </Icon>
+              <span
+                className={classnames(props.classes.milestoneAdjetiveText)}
+              >
+                {nameData.firstPart}
+              </span>
+            </Box>
           </Box>
           <Box style={{marginTop: '-6px'}}>
             <span>{nameData.secondPart}</span>
