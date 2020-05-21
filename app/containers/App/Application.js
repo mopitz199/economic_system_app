@@ -26,7 +26,7 @@ import {
   Photos, Error, Settings,
   HelpSupport, MapMarker, MapDirection, SearchMap,
   TrafficIndicator, StreetViewMap, NotFound,
-  Milestones, Portfolio, Asset
+  Milestones, Portfolio, Asset, PortfolioOptimization
 } from '../pageListAsync';
 
 class Application extends React.Component {
@@ -38,6 +38,7 @@ class Application extends React.Component {
           <Route exact path="/app/milestones" component={Milestones} />
           <Route exact path="/app/portfolio" component={Portfolio} />
           <Route exact path="/app/asset/:assetId" component={Asset} />
+          <Route exact path="/app/portfolio-optimization" component={PortfolioOptimization} />
           <Route exact path="/app/dashboard-v2" component={DashboardV2} />
           { /* Layout */ }
           <Route exact path="/app/layouts" component={Parent} />

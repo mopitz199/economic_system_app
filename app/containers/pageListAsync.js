@@ -11,6 +11,11 @@ export const Portfolio = Loadable({
   loading: Loading,
 });
 
+export const PortfolioOptimization = Loadable({
+  loader: () => import('./PortfolioOptimization/PortfolioOptimization'),
+  loading: Loading,
+});
+
 export const Asset = Loadable({
   loader: () => import('./Asset/Asset'),
   loading: Loading,
