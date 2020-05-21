@@ -1,7 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Select from 'react-select';
+import AsyncSelect from 'react-select/async';
 import { emphasize, makeStyles, useTheme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import NoSsr from '@material-ui/core/NoSsr';
@@ -11,45 +10,11 @@ import Chip from '@material-ui/core/Chip';
 import MenuItem from '@material-ui/core/MenuItem';
 import CancelIcon from '@material-ui/icons/Cancel';
 
-const suggestions = [
-  { label: 'Afghanistan' },
-  { label: 'Aland Islands' },
-  { label: 'Albania' },
-  { label: 'Algeria' },
-  { label: 'American Samoa' },
-  { label: 'Andorra' },
-  { label: 'Angola' },
-  { label: 'Anguilla' },
-  { label: 'Antarctica' },
-  { label: 'Antigua and Barbuda' },
-  { label: 'Argentina' },
-  { label: 'Armenia' },
-  { label: 'Aruba' },
-  { label: 'Australia' },
-  { label: 'Austria' },
-  { label: 'Azerbaijan' },
-  { label: 'Bahamas' },
-  { label: 'Bahrain' },
-  { label: 'Bangladesh' },
-  { label: 'Barbados' },
-  { label: 'Belarus' },
-  { label: 'Belgium' },
-  { label: 'Belize' },
-  { label: 'Benin' },
-  { label: 'Bermuda' },
-  { label: 'Bhutan' },
-  { label: 'Bolivia, Plurinational State of' },
-  { label: 'Bonaire, Sint Eustatius and Saba' },
-  { label: 'Bosnia and Herzegovina' },
-  { label: 'Botswana' },
-  { label: 'Bouvet Island' },
-  { label: 'Brazil' },
-  { label: 'British Indian Ocean Territory' },
-  { label: 'Brunei Darussalam' },
-].map(suggestion => ({
-  value: suggestion.label,
-  label: suggestion.label,
-}));
+import {
+  InputLabel,
+} from '@material-ui/core';
+
+import {server, headers} from '../../constants';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -229,15 +194,9 @@ const components = {
   ValueContainer,
 };
 
-export default function SelectSuggestions() {
+export default function AssetSearch(props) {
   const classes = useStyles();
   const theme = useTheme();
-  const [single, setSingle] = React.useState(null);
-
-  function handleChangeSingle(value) {
-    setSingle(value);
-  }
-
   const selectStyles = {
     input: base => ({
       ...base,
@@ -248,25 +207,66 @@ export default function SelectSuggestions() {
     }),
   };
 
+  const processSearch = (data, inputValue) => {
+    //debugger
+    let options = []
+    data.forEach(asset => {
+      inputValue = inputValue.toLowerCase()
+      options.push({
+        'label': getLabelFromJson(asset),
+        'value': JSON.stringify({
+          'id': asset.id,
+          'name': asset.name,
+          'symbol': asset.symbol,
+          'asset_type': asset.asset_type
+        }),
+      })
+    });
+    return options
+  };
+
+  const loadOptions = (inputValue, callback) => {
+    console.log("loading options")
+    fetch(
+      `${server}/api/asset/search/?q=${inputValue}`,
+      {headers}
+    )
+      .then(res => res.json())
+      .then(res => callback(processSearch(res['results'], inputValue)))
+  };
+
+  const getLabelFromJson = (asset) => {
+    return `${asset.name} (${asset.symbol}) (${asset.asset_type})`
+  };
+
+  const getLabelFromString = (assetStr) => {
+    try{
+      const asset = JSON.parse(assetStr)
+      return getLabelFromJson(asset);
+    }catch{
+      return assetStr;
+    }
+  }
+
   return (
     <div className={classes.root}>
       <NoSsr>
-        <Select
-          classes={classes}
-          styles={selectStyles}
-          inputId="react-select-single"
-          TextFieldProps={{
-            label: 'Country',
-            InputLabelProps: {
-              htmlFor: 'react-select-single',
-              shrink: true,
-            },
-            placeholder: 'Search a country (start with a)',
+        <InputLabel htmlFor="uncontrolled-native">Asset</InputLabel>
+        <AsyncSelect
+          value={{
+            'label': getLabelFromString(props.value),
+            'value': props.value
           }}
-          options={suggestions}
+          name='asset'
+          inputId="react-select-multiple"
           components={components}
-          value={single}
-          onChange={handleChangeSingle}
+          classes={classes}
+          placeholder=""
+          styles={selectStyles}
+          cacheOptions
+          loadOptions={loadOptions}
+          defaultOptions
+          onChange = {(option) => props.onChange(option.value)}
         />
       </NoSsr>
     </div>

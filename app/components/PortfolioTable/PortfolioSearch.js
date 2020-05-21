@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import AsyncSelect from 'react-select/async';
 import { emphasize, makeStyles, useTheme } from '@material-ui/core/styles';
@@ -77,28 +76,9 @@ function NoOptionsMessage(props) {
   );
 }
 
-NoOptionsMessage.propTypes = {
-  children: PropTypes.node,
-  innerProps: PropTypes.object,
-  selectProps: PropTypes.object.isRequired,
-};
-
-NoOptionsMessage.defaultProps = {
-  children: null,
-  innerProps: null
-};
-
 function inputComponent({ inputRef, ...props }) {
   return <div ref={inputRef} {...props} />;
 }
-
-inputComponent.propTypes = {
-  inputRef: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
-};
-
-inputComponent.defaultProps = {
-  inputRef: undefined
-};
 
 function Control(props) {
   const {
@@ -125,19 +105,6 @@ function Control(props) {
   );
 }
 
-Control.propTypes = {
-  children: PropTypes.node,
-  innerProps: PropTypes.object,
-  innerRef: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
-  selectProps: PropTypes.object.isRequired,
-};
-
-Control.defaultProps = {
-  children: null,
-  innerProps: null,
-  innerRef: undefined
-};
-
 function Option(props) {
   const {
     innerRef,
@@ -161,22 +128,6 @@ function Option(props) {
   );
 }
 
-Option.propTypes = {
-  children: PropTypes.node,
-  innerProps: PropTypes.object,
-  innerRef: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
-  isFocused: PropTypes.bool,
-  isSelected: PropTypes.bool,
-};
-
-Option.defaultProps = {
-  children: null,
-  innerProps: null,
-  innerRef: undefined,
-  isFocused: false,
-  isSelected: false
-};
-
 function Placeholder(props) {
   const { selectProps, innerProps, children } = props;
   return (
@@ -190,17 +141,6 @@ function Placeholder(props) {
   );
 }
 
-Placeholder.propTypes = {
-  children: PropTypes.node,
-  innerProps: PropTypes.object,
-  selectProps: PropTypes.object.isRequired,
-};
-
-Placeholder.defaultProps = {
-  children: null,
-  innerProps: null,
-};
-
 function SingleValue(props) {
   const { selectProps, children, innerProps } = props;
   return (
@@ -210,30 +150,10 @@ function SingleValue(props) {
   );
 }
 
-SingleValue.propTypes = {
-  children: PropTypes.node,
-  innerProps: PropTypes.object,
-  selectProps: PropTypes.object.isRequired,
-};
-
-SingleValue.defaultProps = {
-  children: null,
-  innerProps: null,
-};
-
 function ValueContainer(props) {
   const { selectProps, children } = props;
   return <div className={selectProps.classes.valueContainer}>{children}</div>;
 }
-
-ValueContainer.propTypes = {
-  children: PropTypes.node,
-  selectProps: PropTypes.object.isRequired,
-};
-
-ValueContainer.defaultProps = {
-  children: null,
-};
 
 function MultiValue(props) {
   const {
@@ -255,18 +175,6 @@ function MultiValue(props) {
   );
 }
 
-MultiValue.propTypes = {
-  children: PropTypes.node,
-  isFocused: PropTypes.bool,
-  removeProps: PropTypes.object.isRequired,
-  selectProps: PropTypes.object.isRequired,
-};
-
-MultiValue.defaultProps = {
-  children: null,
-  isFocused: false,
-};
-
 function Menu(props) {
   const { selectProps, innerProps, children } = props;
   return (
@@ -275,18 +183,6 @@ function Menu(props) {
     </Paper>
   );
 }
-
-Menu.propTypes = {
-  children: PropTypes.node,
-  innerProps: PropTypes.object,
-  selectProps: PropTypes.object,
-};
-
-Menu.defaultProps = {
-  children: null,
-  innerProps: null,
-  selectProps: null,
-};
 
 const components = {
   Control,

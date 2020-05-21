@@ -212,7 +212,6 @@ class PortfolioTable extends Component {
 
   deleteAssetPortfolio(data, removeRow, reducerName){
     const id = data.get('id')
-    debugger
     fetch(
       `${server}/api/asset/asset_portfolio/${id}`,
       {
