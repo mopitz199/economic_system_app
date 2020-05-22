@@ -68,7 +68,12 @@ function ToolBar(props){
           </Button>
         </Box>
         <Box width={1} display="flex" justifyContent="flex-end">
-          <Button className={classes.button} variant="contained" size="small">
+          <Button
+            className={classes.button}
+            variant="contained"
+            size="small"
+            onClick={props.onValidateClick}
+          >
             <CheckIcon className={classNames(classes.leftIcon, classes.iconSmall)} />
             Validate
           </Button>

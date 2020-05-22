@@ -13,6 +13,7 @@ import {
   InputLabel,
   InputAdornment,
   FormControl,
+  FormHelperText,
 } from '@material-ui/core';
 import styles from '../../components/CardPaper/cardStyle-jss';
 
@@ -46,7 +47,11 @@ function CustomCard(props){
         subheader={subText}
       />
       <CardContent>
-        <FormControl fullWidth className={classes.margin}>
+        <FormControl
+          error={props.assetData.minPercentageError}
+          fullWidth
+          className={classes.margin}
+        >
           <InputLabel htmlFor="adornment-min-percentage">Min</InputLabel>
           <Input
             id="adornment-min-percentage"
@@ -54,8 +59,15 @@ function CustomCard(props){
             onChange={e => props.onMinAssetChange(e, props.assetData.id)}
             endAdornment={<InputAdornment position="end">%</InputAdornment>}
           />
+          <FormHelperText id="name-error-text">
+            {props.assetData.minPercentageError}
+          </FormHelperText>
         </FormControl>
-        <FormControl fullWidth className={classes.margin}>
+        <FormControl
+          error={props.assetData.maxPercentageError}
+          fullWidth
+          className={classes.margin}
+        >
           <InputLabel htmlFor="adornment-max-percentage">Max</InputLabel>
           <Input
             id="adornment-max-percentage"
@@ -63,6 +75,9 @@ function CustomCard(props){
             onChange={e => props.onMaxAssetChange(e, props.assetData.id)}
             endAdornment={<InputAdornment position="end">%</InputAdornment>}
           />
+          <FormHelperText id="name-error-text">
+            {props.assetData.maxPercentageError}
+          </FormHelperText>
         </FormControl>
       </CardContent>
     </Card>

@@ -1,9 +1,15 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
+import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import PapperBlock from '../../components/PapperBlock/PapperBlock';
+import CloseIcon from '@material-ui/icons/Close';
+import { Snackbar, Button, IconButton, SnackbarContent  } from '@material-ui/core';
 import ToolBar from './ToolBar';
 import Assets from './Assets';
+import CustomSnackBar from './SnackBar';
+import messageStyles from 'ba-styles/Messages.scss';
+
 
 class PortfolioOptimization extends React.Component {
 
@@ -12,7 +18,10 @@ class PortfolioOptimization extends React.Component {
     this.state = {
       searchResult: "",
       assetList: [],
-      minDisposedToLose: null,
+      minDisposedToLose: 0,
+
+      open: false,
+      errorMessage: ""
     };
   }
 
@@ -26,6 +35,60 @@ class PortfolioOptimization extends React.Component {
       }
     })
     return [correctAssetData, index]
+  }
+
+  validateSumMin(){
+    let sum = 0
+    this.state.assetList.forEach(assetData => {
+      sum += parseFloat(assetData.minPercentage)
+    })
+    debugger
+    return sum <= 100
+  }
+
+  validateAssetMinMax(){
+    let valid = true
+    var floatNumberRegex = /^\d+(\.\d{1,2})?$/;
+    let assetList = this.state.assetList
+    assetList.forEach(assetData => {
+      if(!floatNumberRegex.test(assetData.minPercentage)){
+        assetData.minPercentageError = 'It must be a number'
+        valid = false
+      }
+      else if(assetData.minPercentage < 0 || assetData.minPercentage > 100){
+        assetData.minPercentageError = 'It must be a number between 0 and 100'
+        valid = false
+      }else{
+        assetData.minPercentageError = ""
+      }
+
+      if(!floatNumberRegex.test(assetData.maxPercentage)){
+        assetData.maxPercentageError = 'It must be a number'
+        valid = false
+      }
+      else if(assetData.maxPercentage < 0 || assetData.maxPercentage > 100){
+        assetData.maxPercentageError = 'It must be a number between 0 and 100'
+      }else{
+        assetData.maxPercentageError = ""
+      }
+    })
+    this.setState({assetList: assetList})
+    return valid
+  }
+
+  onSnackBarClose = () => {
+    this.setState({open: false})
+  }
+
+  onValidateClick = () => {
+    if(this.validateAssetMinMax()){
+      if(!this.validateSumMin()){
+        this.setState({
+          open: true,
+          errorMessage: "The total min prcentage should be <= 100"
+        })
+      }
+    }
   }
 
   onMinDisposedToLoseChange = (e) => {
@@ -86,10 +149,19 @@ class PortfolioOptimization extends React.Component {
           <meta property="twitter:description" content={description} />
         </Helmet>
         <PapperBlock title="Portfolio Optimization" desc="The section where you can optimizate and simulate the performance of a possible portfolio">
+          <CustomSnackBar
+            type="error"
+            message={this.state.errorMessage}
+            onClose={this.onSnackBarClose}
+            open={this.state.open}
+          />
           <ToolBar
             searchValue={this.state.searchResult}
             onSearchChange={this.onSearchChange}
             onAddClick={this.onAddClick}
+            onMinDisposedToLoseChange={this.onMinDisposedToLoseChange}
+            minDisposedToLoseValue={this.state.minDisposedToLose}
+            onValidateClick={this.onValidateClick}
           />
           <Assets
             assetList={this.state.assetList}
