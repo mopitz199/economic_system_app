@@ -1,7 +1,16 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
-import { Box, Button, FormControl, InputLabel, Input, InputAdornment } from '@material-ui/core';
+import {
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  Input,
+  InputAdornment,
+  CircularProgress,
+  FormHelperText,
+} from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import CheckIcon from '@material-ui/icons/Check';
 import Save from '@material-ui/icons/Save';
@@ -9,7 +18,6 @@ import { AssetSearch } from 'components';
 
 
 const styles = theme => {
-  console.log(theme)
   return {
     root: {
       marginBottom: theme.spacing(4)
@@ -46,6 +54,47 @@ const styles = theme => {
 }
 
 
+const stylesValidateButton = theme => ({
+  iconSmall: {
+    fontSize: 20,
+  },
+  leftIcon: {
+    marginRight: theme.spacing(1),
+  },
+  wrapper: {
+    position: 'relative',
+  },
+  button: {
+    marginTop: theme.spacing(2),
+    marginLeft: theme.spacing(2),
+  },
+  buttonProgress: {
+    color: theme.palette.success.main,
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+  },
+});
+function ValidateButton(props){
+  const { classes } = props;
+  return (
+    <div className={classes.wrapper}>
+      <Button
+        className={classes.button}
+        variant="contained"
+        disabled={props.loading}
+        onClick={props.onClick}
+      >
+        <CheckIcon className={classNames(classes.leftIcon, classes.iconSmall)} />
+        Validate
+      </Button>
+      {props.loading && <CircularProgress size={16} className={classes.buttonProgress} />}
+    </div>
+  )
+}
+const ValidateButtonComponent = withStyles(stylesValidateButton)(ValidateButton)
+
+
 function ToolBar(props){
   const { classes } = props;
   return (
@@ -68,15 +117,10 @@ function ToolBar(props){
           </Button>
         </Box>
         <Box width={1} display="flex" justifyContent="flex-end">
-          <Button
-            className={classes.button}
-            variant="contained"
-            size="small"
+          <ValidateButtonComponent
             onClick={props.onValidateClick}
-          >
-            <CheckIcon className={classNames(classes.leftIcon, classes.iconSmall)} />
-            Validate
-          </Button>
+            loading={props.loadingValidation}
+          />
           <Button className={classes.button} variant="contained" size="small">
             <Save className={classNames(classes.leftIcon, classes.iconSmall)} />
             Save
@@ -84,7 +128,9 @@ function ToolBar(props){
         </Box>
       </Box>
       <Box className={classes.subToolBox}>
-        <FormControl>
+        <FormControl
+          error={props.minDisposedToLoseErrorMessage!=""}
+        >
           <InputLabel htmlFor="adornment-amount">Min disposed to lose</InputLabel>
           <Input
             id="adornment-amount"
@@ -92,6 +138,9 @@ function ToolBar(props){
             onChange={props.onMinDisposedToLoseChange}
             endAdornment={<InputAdornment position="end">%</InputAdornment>}
           />
+          <FormHelperText id="name-error-text">
+            {props.minDisposedToLoseErrorMessage}
+          </FormHelperText>
         </FormControl>
       </Box>
     </Box>

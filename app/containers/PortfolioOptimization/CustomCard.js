@@ -18,6 +18,32 @@ import {
 import styles from '../../components/CardPaper/cardStyle-jss';
 
 
+const titleStyles = theme => {
+  return {
+    percentageDistribution: {
+      marginLeft: theme.spacing(1),
+      color: theme.palette.success.main
+    }
+  }
+}
+
+
+function Title(props){
+  const { classes } = props;
+  return (
+    <span>
+      <span>{props.assetData.symbol}</span>
+      <span className={classes.percentageDistribution}>
+        {props.assetData.percentageDistribution
+          ? `${props.assetData.percentageDistribution}%`
+          : null
+        }
+      </span>
+    </span>
+  )
+}
+const TitleComponent = withStyles(titleStyles)(Title)
+
 function CustomCard(props){
 
   const {
@@ -43,12 +69,12 @@ function CustomCard(props){
             <CancelIcon />
           </IconButton>
         )}
-        title={name}
+        title={<TitleComponent assetData={props.assetData}/>}
         subheader={subText}
       />
       <CardContent>
         <FormControl
-          error={props.assetData.minPercentageError}
+          error={props.assetData.minPercentageError!=""}
           fullWidth
           className={classes.margin}
         >
@@ -64,7 +90,7 @@ function CustomCard(props){
           </FormHelperText>
         </FormControl>
         <FormControl
-          error={props.assetData.maxPercentageError}
+          error={props.assetData.maxPercentageError!=""}
           fullWidth
           className={classes.margin}
         >

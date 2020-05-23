@@ -18,7 +18,11 @@ class PortfolioOptimization extends React.Component {
     this.state = {
       searchResult: "",
       assetList: [],
+
       minDisposedToLose: 0,
+      minDisposedToLoseErrorMessage: "",
+      
+      loadingValidation: false,
 
       open: false,
       errorMessage: ""
@@ -42,8 +46,21 @@ class PortfolioOptimization extends React.Component {
     this.state.assetList.forEach(assetData => {
       sum += parseFloat(assetData.minPercentage)
     })
-    debugger
     return sum <= 100
+  }
+
+  validateGlobalMin(){
+    var floatNumberRegex = /^\d+(\.\d{1,2})?$/;
+    if(!floatNumberRegex.test(this.state.minDisposedToLose)){
+      this.setState({minDisposedToLoseErrorMessage: 'It must be a number'})
+      return false
+    }
+    if(this.state.minDisposedToLose < 0 || this.state.minDisposedToLose > 100){
+      this.setState({minDisposedToLoseErrorMessage: 'It must be a number between 0 and 100'})
+      return false
+    }
+    this.setState({minDisposedToLoseErrorMessage: ''})
+    return true
   }
 
   validateAssetMinMax(){
@@ -80,14 +97,48 @@ class PortfolioOptimization extends React.Component {
     this.setState({open: false})
   }
 
+
+  cleanValidationProcess = (assetList=null) => {
+    if(!assetList){
+      assetList = this.state.assetList  
+    }
+    assetList.forEach(assetData => {
+      assetData.percentageDistribution = null
+    })
+    return assetList
+  }
+
+  processOptimization = () => {
+    let assetList = this.state.assetList
+    setTimeout(() => {
+      assetList.forEach(assetData => {
+        assetData.percentageDistribution = 10
+      })
+      this.setState({
+        assetList: assetList,
+        loadingValidation: false
+      })
+    }, 2000)
+  }
+
   onValidateClick = () => {
-    if(this.validateAssetMinMax()){
-      if(!this.validateSumMin()){
-        this.setState({
-          open: true,
-          errorMessage: "The total min prcentage should be <= 100"
-        })
+    this.setState({loadingValidation: true})
+    if(this.validateGlobalMin()){
+      if(this.validateAssetMinMax()){
+        if(!this.validateSumMin()){
+          this.setState({
+            open: true,
+            errorMessage: "The total min prcentage should be <= 100",
+            loadingValidation: false,
+          })
+        }else{
+          this.processOptimization()
+        }
+      }else{
+        this.setState({loadingValidation: false})  
       }
+    }else{
+      this.setState({loadingValidation: false})
     }
   }
 
@@ -104,10 +155,14 @@ class PortfolioOptimization extends React.Component {
     if(this.state.searchResult){
       let assetData = JSON.parse(this.state.searchResult)
       assetData.minPercentage = 0
+      assetData.maxPercentageError = ""
+      assetData.minPercentageError = ""
       assetData.maxPercentage = 0
       assetList.push(assetData)
       this.setState({
-        assetList: assetList,
+        assetList: this.cleanValidationProcess(assetList),
+        minDisposedToLoseErrorMessage: "",
+        errorMessage: "",
         searchResult: "",
       })
     }
@@ -162,6 +217,8 @@ class PortfolioOptimization extends React.Component {
             onMinDisposedToLoseChange={this.onMinDisposedToLoseChange}
             minDisposedToLoseValue={this.state.minDisposedToLose}
             onValidateClick={this.onValidateClick}
+            loadingValidation={this.state.loadingValidation}
+            minDisposedToLoseErrorMessage={this.state.minDisposedToLoseErrorMessage}
           />
           <Assets
             assetList={this.state.assetList}
