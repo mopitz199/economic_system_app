@@ -18,21 +18,19 @@ import {
 import styles from '../../components/CardPaper/cardStyle-jss';
 
 
-const titleStyles = theme => {
-  return {
-    percentageDistribution: {
-      marginLeft: theme.spacing(1),
-      color: theme.palette.success.main
-    }
+const titleStyles = theme => ({
+  percentageDistribution: {
+    marginLeft: theme.spacing(1),
+    color: theme.palette.success.main
   }
-}
+});
 
 
-function Title(props){
+function Title(props) {
   const { classes } = props;
   return (
     <span>
-      <span>{props.assetData.symbol}</span>
+      <span>{props.assetData.asset.symbol}</span>
       <span className={classes.percentageDistribution}>
         {props.assetData.percentageDistribution
           ? `${props.assetData.percentageDistribution}%`
@@ -40,12 +38,11 @@ function Title(props){
         }
       </span>
     </span>
-  )
+  );
 }
-const TitleComponent = withStyles(titleStyles)(Title)
+const TitleComponent = withStyles(titleStyles)(Title);
 
-function CustomCard(props){
-
+function CustomCard(props) {
   const {
     classes,
     avatar,
@@ -53,12 +50,12 @@ function CustomCard(props){
     subText,
     image,
   } = props;
-    
+
   return (
     <Card>
       <CardHeader
         avatar={
-          <Avatar alt="avatar" src={avatar} className={classes.avatar} />
+          <Avatar alt="avatar" src="https://www.pngitem.com/pimgs/m/5-52517_free-stock-exchange-svg-stock-market-icon-png.png" className={classes.avatar} />
         }
         action={(
           <IconButton
@@ -69,19 +66,19 @@ function CustomCard(props){
             <CancelIcon />
           </IconButton>
         )}
-        title={<TitleComponent assetData={props.assetData}/>}
+        title={<TitleComponent assetData={props.assetData} />}
         subheader={subText}
       />
       <CardContent>
         <FormControl
-          error={props.assetData.minPercentageError!=""}
+          error={props.assetData.minPercentageError != ''}
           fullWidth
           className={classes.margin}
         >
           <InputLabel htmlFor="adornment-min-percentage">Min</InputLabel>
           <Input
             id="adornment-min-percentage"
-            value={props.assetData.minPercentage}
+            value={props.assetData.min_to_invest}
             onChange={e => props.onMinAssetChange(e, props.assetData.id)}
             endAdornment={<InputAdornment position="end">%</InputAdornment>}
           />
@@ -90,14 +87,14 @@ function CustomCard(props){
           </FormHelperText>
         </FormControl>
         <FormControl
-          error={props.assetData.maxPercentageError!=""}
+          error={props.assetData.maxPercentageError != ''}
           fullWidth
           className={classes.margin}
         >
           <InputLabel htmlFor="adornment-max-percentage">Max</InputLabel>
           <Input
             id="adornment-max-percentage"
-            value={props.assetData.maxPercentage}
+            value={props.assetData.max_to_invest}
             onChange={e => props.onMaxAssetChange(e, props.assetData.id)}
             endAdornment={<InputAdornment position="end">%</InputAdornment>}
           />
@@ -107,7 +104,7 @@ function CustomCard(props){
         </FormControl>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 export default withStyles(styles)(CustomCard);

@@ -10,20 +10,20 @@ const styles = theme => ({
   },
 });
 
-function Asset(props){
+function Asset(props) {
   return (
     <Grid item md={2}>
       <CustomCard
         avatar={avatarApi[2]}
-        name={props.assetData.symbol}
-        subText={props.assetData.name}
+        name={props.assetData.asset.symbol}
+        subText={props.assetData.asset.name}
         assetData={props.assetData}
         onDeleteClick={() => props.onDeleteClick(props.assetData.id)}
         onMinAssetChange={props.onMinAssetChange}
         onMaxAssetChange={props.onMaxAssetChange}
       />
     </Grid>
-  )
+  );
 }
 
 function renderAssets(
@@ -31,24 +31,24 @@ function renderAssets(
   onDeleteClick,
   onMinAssetChange,
   onMaxAssetChange,
-){
-  let assetComponents = []
-  assetList.forEach(assetData => {
+) {
+  const assetComponents = [];
+  assetList.forEach((assetData, index) => {
     assetComponents.push(
       <Asset
-        key={assetData.id}
+        key={index}
         assetData={assetData}
         onDeleteClick={onDeleteClick}
         onMinAssetChange={onMinAssetChange}
         onMaxAssetChange={onMaxAssetChange}
       />
-    )
+    );
   });
-  return assetComponents
+  return assetComponents;
 }
 
 
-function Assets(props){
+function Assets(props) {
   const { classes } = props;
   return (
     <Grid container className={classes.root} spacing={1}>
@@ -59,7 +59,7 @@ function Assets(props){
         props.onMaxAssetChange,
       )}
     </Grid>
-  )
+  );
 }
 
 export default withStyles(styles)(Assets);

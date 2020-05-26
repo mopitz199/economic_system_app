@@ -4,190 +4,253 @@ import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import PapperBlock from '../../components/PapperBlock/PapperBlock';
 import CloseIcon from '@material-ui/icons/Close';
-import { Snackbar, Button, IconButton, SnackbarContent  } from '@material-ui/core';
+import { Snackbar, Button, IconButton, SnackbarContent } from '@material-ui/core';
 import ToolBar from './ToolBar';
 import Assets from './Assets';
 import CustomSnackBar from './SnackBar';
 import messageStyles from 'ba-styles/Messages.scss';
+import { server, headers } from '../../constants';
 
 
 class PortfolioOptimization extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
-      searchResult: "",
+      id: null,
+      name: '',
+      searchResult: '',
       assetList: [],
 
       minDisposedToLose: 0,
-      minDisposedToLoseErrorMessage: "",
-      
+      minDisposedToLoseErrorMessage: '',
+
       loadingValidation: false,
 
       open: false,
-      errorMessage: ""
+      errorMessage: ''
     };
   }
 
-  getAssetDataById(id){
-    let correctAssetData = null
-    let index = null
+  getAssetDataById(id) {
+    let correctAssetData = null;
+    let index = null;
     this.state.assetList.forEach((assetData, i) => {
-      if(assetData.id==id){
-        correctAssetData=assetData
-        index=i
+      if (assetData.id == id) {
+        correctAssetData = assetData;
+        index = i;
       }
-    })
-    return [correctAssetData, index]
+    });
+    return [correctAssetData, index];
   }
 
-  validateSumMin(){
-    let sum = 0
+  validateSumMin() {
+    let sum = 0;
     this.state.assetList.forEach(assetData => {
-      sum += parseFloat(assetData.minPercentage)
-    })
-    return sum <= 100
+      sum += parseFloat(assetData.min_to_invest);
+    });
+    return sum <= 100;
   }
 
-  validateGlobalMin(){
-    var floatNumberRegex = /^\d+(\.\d{1,2})?$/;
-    if(!floatNumberRegex.test(this.state.minDisposedToLose)){
-      this.setState({minDisposedToLoseErrorMessage: 'It must be a number'})
-      return false
+  validateGlobalMin() {
+    const floatNumberRegex = /^\d+(\.\d{1,2})?$/;
+    if (!floatNumberRegex.test(this.state.minDisposedToLose)) {
+      this.setState({ minDisposedToLoseErrorMessage: 'It must be a number' });
+      return false;
     }
-    if(this.state.minDisposedToLose < 0 || this.state.minDisposedToLose > 100){
-      this.setState({minDisposedToLoseErrorMessage: 'It must be a number between 0 and 100'})
-      return false
+    if (this.state.minDisposedToLose < 0 || this.state.minDisposedToLose > 100) {
+      this.setState({ minDisposedToLoseErrorMessage: 'It must be a number between 0 and 100' });
+      return false;
     }
-    this.setState({minDisposedToLoseErrorMessage: ''})
-    return true
+    this.setState({ minDisposedToLoseErrorMessage: '' });
+    return true;
   }
 
-  validateAssetMinMax(){
-    let valid = true
-    var floatNumberRegex = /^\d+(\.\d{1,2})?$/;
-    let assetList = this.state.assetList
+  validateAssetMinMax() {
+    let valid = true;
+    const floatNumberRegex = /^\d+(\.\d{1,2})?$/;
+    const assetList = this.state.assetList;
     assetList.forEach(assetData => {
-      if(!floatNumberRegex.test(assetData.minPercentage)){
-        assetData.minPercentageError = 'It must be a number'
-        valid = false
-      }
-      else if(assetData.minPercentage < 0 || assetData.minPercentage > 100){
-        assetData.minPercentageError = 'It must be a number between 0 and 100'
-        valid = false
-      }else{
-        assetData.minPercentageError = ""
+      if (!floatNumberRegex.test(assetData.min_to_invest)) {
+        assetData.minPercentageError = 'It must be a number';
+        valid = false;
+      } else if (assetData.min_to_invest < 0 || assetData.min_to_invest > 100) {
+        assetData.minPercentageError = 'It must be a number between 0 and 100';
+        valid = false;
+      } else {
+        assetData.minPercentageError = '';
       }
 
-      if(!floatNumberRegex.test(assetData.maxPercentage)){
-        assetData.maxPercentageError = 'It must be a number'
-        valid = false
+      if (!floatNumberRegex.test(assetData.max_to_invest)) {
+        assetData.maxPercentageError = 'It must be a number';
+        valid = false;
+      } else if (assetData.max_to_invest < 0 || assetData.max_to_invest > 100) {
+        assetData.maxPercentageError = 'It must be a number between 0 and 100';
+      } else {
+        assetData.maxPercentageError = '';
       }
-      else if(assetData.maxPercentage < 0 || assetData.maxPercentage > 100){
-        assetData.maxPercentageError = 'It must be a number between 0 and 100'
-      }else{
-        assetData.maxPercentageError = ""
-      }
-    })
-    this.setState({assetList: assetList})
-    return valid
+    });
+    this.setState({ assetList });
+    return valid;
   }
 
   onSnackBarClose = () => {
-    this.setState({open: false})
+    this.setState({ open: false });
   }
 
-
-  cleanValidationProcess = (assetList=null) => {
-    if(!assetList){
-      assetList = this.state.assetList  
+  cleanValidationProcess = (assetList = null) => {
+    if (!assetList) {
+      assetList = this.state.assetList;
     }
     assetList.forEach(assetData => {
-      assetData.percentageDistribution = null
-    })
-    return assetList
+      assetData.percentageDistribution = null;
+    });
+    return assetList;
   }
 
   processOptimization = () => {
-    let assetList = this.state.assetList
+    const assetList = this.state.assetList;
     setTimeout(() => {
       assetList.forEach(assetData => {
-        assetData.percentageDistribution = 10
-      })
+        assetData.percentageDistribution = 10;
+      });
       this.setState({
-        assetList: assetList,
+        assetList,
         loadingValidation: false
-      })
-    }, 2000)
+      });
+    }, 2000);
   }
 
   onValidateClick = () => {
-    this.setState({loadingValidation: true})
-    if(this.validateGlobalMin()){
-      if(this.validateAssetMinMax()){
-        if(!this.validateSumMin()){
+    this.setState({ loadingValidation: true });
+    if (this.validateGlobalMin()) {
+      if (this.validateAssetMinMax()) {
+        if (!this.validateSumMin()) {
           this.setState({
             open: true,
-            errorMessage: "The total min prcentage should be <= 100",
+            errorMessage: 'The total min prcentage should be <= 100',
             loadingValidation: false,
-          })
-        }else{
-          this.processOptimization()
+          });
+        } else {
+          this.processOptimization();
         }
-      }else{
-        this.setState({loadingValidation: false})  
+      } else {
+        this.setState({ loadingValidation: false });
       }
-    }else{
-      this.setState({loadingValidation: false})
+    } else {
+      this.setState({ loadingValidation: false });
     }
   }
 
   onMinDisposedToLoseChange = (e) => {
-    this.setState({minDisposedToLose: e.target.value})
+    this.setState({ minDisposedToLose: e.target.value });
   }
 
   onSearchChange = (value) => {
-    this.setState({searchResult: value})
+    this.setState({ searchResult: value });
   }
 
   onAddClick = () => {
-    let assetList = this.state.assetList
-    if(this.state.searchResult){
-      let assetData = JSON.parse(this.state.searchResult)
-      assetData.minPercentage = 0
-      assetData.maxPercentageError = ""
-      assetData.minPercentageError = ""
-      assetData.maxPercentage = 0
-      assetList.push(assetData)
+    const assetList = this.state.assetList;
+    if (this.state.searchResult) {
+      const asset = JSON.parse(this.state.searchResult);
+      const assetData = {};
+      assetData.asset = asset;
+      assetData.min_to_invest = 0;
+      assetData.max_to_invest = 0;
+      assetData.maxPercentageError = '';
+      assetData.minPercentageError = '';
+      assetList.push(assetData);
       this.setState({
         assetList: this.cleanValidationProcess(assetList),
-        minDisposedToLoseErrorMessage: "",
-        errorMessage: "",
-        searchResult: "",
-      })
+        minDisposedToLoseErrorMessage: '',
+        errorMessage: '',
+        searchResult: '',
+      });
     }
   }
 
+  processDataToSave = () => {
+    const body = {
+      asset_optimizations: [],
+      min_disposed_to_lose: this.state.minDisposedToLose,
+      name: this.state.name
+    };
+    this.state.assetList.forEach(assetOptmization => {
+      body.asset_optimizations.push({
+        id: assetOptmization.id,
+        asset: assetOptmization.asset.id,
+        min_to_invest: assetOptmization.min_to_invest,
+        max_to_invest: assetOptmization.max_to_invest,
+      });
+    });
+    return body;
+  }
+
+  onSaveClick = () => {
+    const body = this.processDataToSave();
+    fetch(
+      `${server}/api/portfolio-optimization/${this.state.id}/`,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers
+      }
+    );
+  }
+
   onDeleteClick = (id) => {
-    let assetList = this.state.assetList
-    assetList = assetList.filter(assetData => assetData.id != id)
-    this.setState({assetList: assetList})
+    let assetList = this.state.assetList;
+    assetList = assetList.filter(assetData => assetData.id != id);
+    this.setState({ assetList });
   }
 
   onMinAssetChange = (e, id) => {
-    let data = this.getAssetDataById(id)
-    data[0].minPercentage = e.target.value
-    let assetList = this.state.assetList
-    assetList[data[1]] = data[0]
-    this.setState({assetList: assetList})
+    const data = this.getAssetDataById(id);
+    data[0].min_to_invest = e.target.value;
+    const assetList = this.state.assetList;
+    assetList[data[1]] = data[0];
+    this.setState({ assetList });
   }
 
   onMaxAssetChange = (e, id) => {
-    let data = this.getAssetDataById(id)
-    data[0].maxPercentage = e.target.value
-    let assetList = this.state.assetList
-    assetList[data[1]] = data[0]
-    this.setState({assetList: assetList})
+    const data = this.getAssetDataById(id);
+    data[0].max_to_invest = e.target.value;
+    const assetList = this.state.assetList;
+    assetList[data[1]] = data[0];
+    this.setState({ assetList });
+  }
+
+
+  setInitData = (portfolioOptimization) => {
+    const assetList = [];
+    portfolioOptimization.assetoptimization_set.forEach(assetOptimization => {
+      /* assetOptimization.name = assetOptimization.asset.name
+      assetOptimization.symbol = assetOptimization.asset.symbol
+      assetOptimization.min_to_invest = assetOptimization.min_to_invest
+      assetOptimization.max_to_invest = assetOptimization.max_to_invest */
+      assetOptimization.maxPercentageError = '';
+      assetOptimization.minPercentageError = '';
+      assetList.push(assetOptimization);
+    });
+    this.setState({
+      id: portfolioOptimization.id,
+      name: portfolioOptimization.name,
+      minDisposedToLose: portfolioOptimization.min_disposed_to_lose,
+      assetList,
+    });
+  }
+
+  componentWillMount() {
+    const { portfolioOptimizationId } = this.props.match.params;
+    return fetch(
+      `${server}/api/portfolio-optimization/${portfolioOptimizationId}/`,
+      { headers }
+    )
+      .then(res => res.json())
+      .then(res => res.results)
+      .then(portfolioOptimization => {
+        this.setInitData(portfolioOptimization);
+      });
   }
 
   render() {
@@ -214,6 +277,7 @@ class PortfolioOptimization extends React.Component {
             searchValue={this.state.searchResult}
             onSearchChange={this.onSearchChange}
             onAddClick={this.onAddClick}
+            onSaveClick={this.onSaveClick}
             onMinDisposedToLoseChange={this.onMinDisposedToLoseChange}
             minDisposedToLoseValue={this.state.minDisposedToLose}
             onValidateClick={this.onValidateClick}
@@ -232,4 +296,4 @@ class PortfolioOptimization extends React.Component {
   }
 }
 
-export default PortfolioOptimization
+export default PortfolioOptimization;
