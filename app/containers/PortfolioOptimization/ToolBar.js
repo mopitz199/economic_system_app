@@ -132,6 +132,20 @@ function ToolBar(props) {
       </Box>
       <Box className={classes.subToolBox}>
         <FormControl
+          error={props.nameErrorMessage != ''}
+        >
+          <InputLabel htmlFor="adornment-name">Name</InputLabel>
+          <Input
+            id="adornment-name"
+            value={props.name}
+            onChange={props.onChangeName}
+          />
+          <FormHelperText id="name-error-text">
+            {props.nameErrorMessage}
+          </FormHelperText>
+        </FormControl>
+
+        <FormControl
           error={props.minDisposedToLoseErrorMessage != ''}
         >
           <InputLabel htmlFor="adornment-amount">Min disposed to lose</InputLabel>

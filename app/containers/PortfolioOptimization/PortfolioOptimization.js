@@ -18,6 +18,8 @@ class PortfolioOptimization extends React.Component {
     this.state = {
       id: null,
       name: '',
+      nameErrorMessage: '',
+
       searchResult: '',
       assetList: [],
 
@@ -149,6 +151,10 @@ class PortfolioOptimization extends React.Component {
     this.setState({ searchResult: value });
   }
 
+  onChangeName = (e) => {
+    this.setState({ name: e.target.value });
+  }
+
   onAddClick = () => {
     const assetList = this.state.assetList;
     if (this.state.searchResult) {
@@ -188,8 +194,15 @@ class PortfolioOptimization extends React.Component {
 
   onSaveClick = () => {
     const body = this.processDataToSave();
+    let url = null
+    if(this.state.id){
+      url = `${server}/api/portfolio-optimization/${this.state.id}/`
+    }else{
+      url = `${server}/api/portfolio-optimization/`
+    }
+
     fetch(
-      `${server}/api/portfolio-optimization/${this.state.id}/`,
+      url,
       {
         method: 'POST',
         body: JSON.stringify(body),
@@ -224,10 +237,6 @@ class PortfolioOptimization extends React.Component {
   setInitData = (portfolioOptimization) => {
     const assetList = [];
     portfolioOptimization.assetoptimization_set.forEach(assetOptimization => {
-      /* assetOptimization.name = assetOptimization.asset.name
-      assetOptimization.symbol = assetOptimization.asset.symbol
-      assetOptimization.min_to_invest = assetOptimization.min_to_invest
-      assetOptimization.max_to_invest = assetOptimization.max_to_invest */
       assetOptimization.maxPercentageError = '';
       assetOptimization.minPercentageError = '';
       assetList.push(assetOptimization);
@@ -242,15 +251,18 @@ class PortfolioOptimization extends React.Component {
 
   componentWillMount() {
     const { portfolioOptimizationId } = this.props.match.params;
-    return fetch(
-      `${server}/api/portfolio-optimization/${portfolioOptimizationId}/`,
-      { headers }
-    )
-      .then(res => res.json())
-      .then(res => res.results)
-      .then(portfolioOptimization => {
-        this.setInitData(portfolioOptimization);
-      });
+
+    if(portfolioOptimizationId){
+      return fetch(
+        `${server}/api/portfolio-optimization/${portfolioOptimizationId}/`,
+        { headers }
+      )
+        .then(res => res.json())
+        .then(res => res.results)
+        .then(portfolioOptimization => {
+          this.setInitData(portfolioOptimization);
+        });
+    }
   }
 
   render() {
@@ -274,6 +286,9 @@ class PortfolioOptimization extends React.Component {
             open={this.state.open}
           />
           <ToolBar
+            name={this.state.name}
+            nameErrorMessage={this.state.nameErrorMessage}
+            onChangeName={this.onChangeName}
             searchValue={this.state.searchResult}
             onSearchChange={this.onSearchChange}
             onAddClick={this.onAddClick}
