@@ -10,7 +10,7 @@ import Assets from './Assets';
 import CustomSnackBar from './SnackBar';
 import messageStyles from 'ba-styles/Messages.scss';
 import { server, headers } from '../../constants';
-
+import {customFetch} from '../../httpUtils'
 
 class PortfolioOptimization extends React.Component {
   constructor(props) {
@@ -26,9 +26,11 @@ class PortfolioOptimization extends React.Component {
       minDisposedToLose: 0,
       minDisposedToLoseErrorMessage: '',
 
+      loadingSaving: false,
       loadingValidation: false,
 
       open: false,
+      type: '',
       errorMessage: ''
     };
   }
@@ -50,7 +52,31 @@ class PortfolioOptimization extends React.Component {
     this.state.assetList.forEach(assetData => {
       sum += parseFloat(assetData.min_to_invest);
     });
-    return sum <= 100;
+    if(sum <= 100){
+      return true
+    }else{
+      this.setState({
+        type: 'error',
+        open: true,
+        errorMessage: 'The total min prcentage should be <= 100',
+        loadingValidation: false,
+      });
+      return false
+    }
+  }
+
+  validateMinAssetOptimization = () => {
+    if(this.state.assetList.length <= 0){
+      this.setState({
+        type: 'error',
+        open: true,
+        errorMessage: 'You must add at least 1 asset',
+        loadingValidation: false,
+      });
+      return false
+    }else{
+      return true
+    }
   }
 
   validateGlobalMin() {
@@ -95,11 +121,21 @@ class PortfolioOptimization extends React.Component {
     return valid;
   }
 
+  validateName = () => {
+    if(this.state.name == ''){
+      this.setState({
+        nameErrorMessage: 'You must fill this field'
+      })
+      return false
+    }
+    return true
+  }
+
   onSnackBarClose = () => {
     this.setState({ open: false });
   }
 
-  cleanValidationProcess = (assetList = null) => {
+  cleanAssetOptimizationValidations = (assetList = null) => {
     if (!assetList) {
       assetList = this.state.assetList;
     }
@@ -107,6 +143,17 @@ class PortfolioOptimization extends React.Component {
       assetData.percentageDistribution = null;
     });
     return assetList;
+  }
+
+  cleanAllErrorMessages = ({assetList = null, extraState = {}}) => {
+    this.setState({
+      assetList: this.cleanAssetOptimizationValidations(assetList),
+      minDisposedToLoseErrorMessage: '',
+      errorMessage: '',
+      searchResult: '',
+      nameErrorMessage: '',
+      ...extraState
+    });
   }
 
   processOptimization = () => {
@@ -122,23 +169,26 @@ class PortfolioOptimization extends React.Component {
     }, 2000);
   }
 
+  validate = () => {
+    let valid = true
+    valid = this.validateMinAssetOptimization()
+    if(!valid) return false
+    valid = this.validateName()
+    if(!valid) return false
+    valid = this.validateGlobalMin()
+    if(!valid) return false
+    valid = this.validateAssetMinMax()
+    if(!valid) return false
+    valid = this.validateSumMin()
+    if(!valid) return false
+    return valid
+  }
+
   onValidateClick = () => {
     this.setState({ loadingValidation: true });
-    if (this.validateGlobalMin()) {
-      if (this.validateAssetMinMax()) {
-        if (!this.validateSumMin()) {
-          this.setState({
-            open: true,
-            errorMessage: 'The total min prcentage should be <= 100',
-            loadingValidation: false,
-          });
-        } else {
-          this.processOptimization();
-        }
-      } else {
-        this.setState({ loadingValidation: false });
-      }
-    } else {
+    if(this.validate()){
+      this.processOptimization();
+    }else{
       this.setState({ loadingValidation: false });
     }
   }
@@ -166,12 +216,7 @@ class PortfolioOptimization extends React.Component {
       assetData.maxPercentageError = '';
       assetData.minPercentageError = '';
       assetList.push(assetData);
-      this.setState({
-        assetList: this.cleanValidationProcess(assetList),
-        minDisposedToLoseErrorMessage: '',
-        errorMessage: '',
-        searchResult: '',
-      });
+      this.cleanAllErrorMessages({assetList: assetList})
     }
   }
 
@@ -193,22 +238,53 @@ class PortfolioOptimization extends React.Component {
   }
 
   onSaveClick = () => {
-    const body = this.processDataToSave();
-    let url = null
-    if(this.state.id){
-      url = `${server}/api/portfolio-optimization/${this.state.id}/`
-    }else{
-      url = `${server}/api/portfolio-optimization/`
-    }
-
-    fetch(
-      url,
-      {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers
+    this.setState({loadingSaving: true})
+    if(this.validate()){
+      const body = this.processDataToSave();
+      let url = null
+      if(this.state.id){
+        url = `${server}/api/portfolio-optimization/${this.state.id}/`
+      }else{
+        url = `${server}/api/portfolio-optimization/`
       }
-    );
+
+      customFetch({
+        url: url,
+        request: {
+          method: 'POST',
+          body: JSON.stringify(body),
+          headers
+        },
+        onServerError: () => {
+          this.setState({
+            open: true,
+            type: 'error',
+            errorMessage: 'Server Error',
+            loadingSaving: false,
+          });
+        },
+        onSuccess: (data) => {
+          this.cleanAllErrorMessages({
+            extraState: {
+              open: true,
+              type: 'success',
+              errorMessage: 'Your optimization has been created!',
+              loadingSaving: false,
+            }
+          })
+        },
+        onError: (data) => {
+          this.setState({
+            open: true,
+            type: 'error',
+            errorMessage: data.detail,
+            loadingSaving: false,
+          });
+        }
+      })
+    }else{
+      this.setState({loadingSaving: false})
+    }
   }
 
   onDeleteClick = (id) => {
@@ -232,7 +308,6 @@ class PortfolioOptimization extends React.Component {
     assetList[data[1]] = data[0];
     this.setState({ assetList });
   }
-
 
   setInitData = (portfolioOptimization) => {
     const assetList = [];
@@ -280,7 +355,7 @@ class PortfolioOptimization extends React.Component {
         </Helmet>
         <PapperBlock title="Portfolio Optimization" desc="The section where you can optimizate and simulate the performance of a possible portfolio">
           <CustomSnackBar
-            type="error"
+            type={this.state.type}
             message={this.state.errorMessage}
             onClose={this.onSnackBarClose}
             open={this.state.open}
@@ -297,6 +372,7 @@ class PortfolioOptimization extends React.Component {
             minDisposedToLoseValue={this.state.minDisposedToLose}
             onValidateClick={this.onValidateClick}
             loadingValidation={this.state.loadingValidation}
+            loadingSaving={this.state.loadingSaving}
             minDisposedToLoseErrorMessage={this.state.minDisposedToLoseErrorMessage}
           />
           <Assets

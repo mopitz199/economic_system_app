@@ -48,11 +48,14 @@ const styles = theme => ({
     paddingTop: theme.spacing(1),
     borderTop: '5px solid',
     borderColor: theme.palette.grey['500']
+  },
+  nameFormControl: {
+    marginRight: theme.spacing(3)
   }
 });
 
 
-const stylesValidateButton = theme => ({
+const stylesLoadingButton = theme => ({
   iconSmall: {
     fontSize: 20,
   },
@@ -73,7 +76,7 @@ const stylesValidateButton = theme => ({
     left: '50%',
   },
 });
-function ValidateButton(props) {
+function LoadingButton(props) {
   const { classes } = props;
   return (
     <div className={classes.wrapper}>
@@ -83,14 +86,16 @@ function ValidateButton(props) {
         disabled={props.loading}
         onClick={props.onClick}
       >
-        <CheckIcon className={classNames(classes.leftIcon, classes.iconSmall)} />
-        Validate
+        {props.icon}
+        {props.name}
       </Button>
       {props.loading && <CircularProgress size={16} className={classes.buttonProgress} />}
     </div>
   );
 }
-const ValidateButtonComponent = withStyles(stylesValidateButton)(ValidateButton);
+const LoadingButtonComponent = withStyles(stylesLoadingButton)(LoadingButton);
+
+
 
 
 function ToolBar(props) {
@@ -115,23 +120,23 @@ function ToolBar(props) {
           </Button>
         </Box>
         <Box width={1} display="flex" justifyContent="flex-end">
-          <ValidateButtonComponent
+          <LoadingButtonComponent
             onClick={props.onValidateClick}
             loading={props.loadingValidation}
+            icon={<CheckIcon className={classNames(classes.leftIcon, classes.iconSmall)} />}
+            name={'Validate'}
           />
-          <Button
-            className={classes.button}
-            variant="contained"
-            size="small"
-            onClick={() => { props.onSaveClick(); }}
-          >
-            <Save className={classNames(classes.leftIcon, classes.iconSmall)} />
-            Save
-          </Button>
+          <LoadingButtonComponent
+            onClick={props.onSaveClick}
+            loading={props.loadingSaving}
+            icon={<Save className={classNames(classes.leftIcon, classes.iconSmall)} />}
+            name={'Save'}
+          />
         </Box>
       </Box>
       <Box className={classes.subToolBox}>
         <FormControl
+          className={classes.nameFormControl}
           error={props.nameErrorMessage != ''}
         >
           <InputLabel htmlFor="adornment-name">Name</InputLabel>
