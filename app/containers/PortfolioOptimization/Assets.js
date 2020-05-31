@@ -21,6 +21,8 @@ function Asset(props) {
         onDeleteClick={() => props.onDeleteClick(props.assetData.id)}
         onMinAssetChange={props.onMinAssetChange}
         onMaxAssetChange={props.onMaxAssetChange}
+        onAmountToInvestChange={props.onAmountToInvestChange}
+        showSimulationMode={props.showSimulationMode}
       />
     </Grid>
   );
@@ -31,6 +33,8 @@ function renderAssets(
   onDeleteClick,
   onMinAssetChange,
   onMaxAssetChange,
+  onAmountToInvestChange,
+  showSimulationMode,
 ) {
   const assetComponents = [];
   assetList.forEach((assetData, index) => {
@@ -41,6 +45,8 @@ function renderAssets(
         onDeleteClick={onDeleteClick}
         onMinAssetChange={onMinAssetChange}
         onMaxAssetChange={onMaxAssetChange}
+        onAmountToInvestChange={onAmountToInvestChange}
+        showSimulationMode={showSimulationMode}
       />
     );
   });
@@ -57,6 +63,8 @@ function Assets(props) {
         props.onDeleteClick,
         props.onMinAssetChange,
         props.onMaxAssetChange,
+        props.onAmountToInvestChange,
+        props.showSimulationMode,
       )}
     </Grid>
   );

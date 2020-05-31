@@ -14,33 +14,96 @@ import {
   InputAdornment,
   FormControl,
   FormHelperText,
+  Box,
+  Chip,
 } from '@material-ui/core';
 import styles from '../../components/CardPaper/cardStyle-jss';
 
 
-const titleStyles = theme => ({
-  percentageDistribution: {
-    marginLeft: theme.spacing(1),
-    color: theme.palette.success.main
-  }
-});
 
 
-function Title(props) {
+
+function TitleComponent(props) {
   const { classes } = props;
   return (
     <span>
       <span>{props.assetData.asset.symbol}</span>
-      <span className={classes.percentageDistribution}>
-        {props.assetData.percentageDistribution
-          ? `${props.assetData.percentageDistribution}%`
-          : null
-        }
-      </span>
     </span>
   );
 }
-const TitleComponent = withStyles(titleStyles)(Title);
+
+const customCardStyles = theme => {
+  return {
+    ...styles(theme),
+    minInputBox: {
+      marginRight: theme.spacing(4)
+    }
+  }
+}
+
+const optimizationResultStyles = theme => {
+  return {
+    optimizationResultBox: {
+      marginTop: theme.spacing(1)
+    },
+    percentageChip:{
+      backgroundColor: theme.palette.info.main
+    },
+    amountChip:{
+      backgroundColor: theme.palette.success.main
+    },
+    inputToInvestBox:{
+      marginTop: theme.spacing(1)
+    }
+  }
+}
+function OptimizationResult(props){
+  const {classes, onAmountToInvestChange, assetData} = props
+  return (
+    <Box>
+      <Box className={classes.inputToInvestBox}>
+        <FormControl
+          error={assetData.amountToInvestError != ''}
+          fullWidth
+          className={classes.margin}
+        >
+          <InputLabel htmlFor="adornment-min-percentage">Amount to invest</InputLabel>
+          <Input
+            id="adornment-min-percentage"
+            value={assetData.amountToInvest}
+            onChange={e => onAmountToInvestChange(e, assetData.id)}
+            startAdornment={<InputAdornment position="start">$</InputAdornment>}
+          />
+          <FormHelperText id="name-error-text">
+            {assetData.amountToInvestError}
+          </FormHelperText>
+        </FormControl>
+      </Box>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        className={classes.optimizationResultBox}
+      >
+        {assetData.amountToInvestResult ? 
+          <Chip
+            label="2.4%"
+            className={classes.amountChip}
+            color="secondary"
+          /> : null
+        }
+        {assetData.percentageToInvestResult ? 
+          <Chip
+            label="$920"
+            className={classes.percentageChip}
+            color="primary"
+          /> : null
+        }
+      </Box>
+    </Box>
+  )
+}
+const OptimizationResultComponent = withStyles(optimizationResultStyles)(OptimizationResult);
+
 
 function CustomCard(props) {
   const {
@@ -50,7 +113,6 @@ function CustomCard(props) {
     subText,
     image,
   } = props;
-
   return (
     <Card>
       <CardHeader
@@ -70,41 +132,56 @@ function CustomCard(props) {
         subheader={subText}
       />
       <CardContent>
-        <FormControl
-          error={props.assetData.minPercentageError != ''}
-          fullWidth
-          className={classes.margin}
-        >
-          <InputLabel htmlFor="adornment-min-percentage">Min</InputLabel>
-          <Input
-            id="adornment-min-percentage"
-            value={props.assetData.min_to_invest}
-            onChange={e => props.onMinAssetChange(e, props.assetData.id)}
-            endAdornment={<InputAdornment position="end">%</InputAdornment>}
-          />
-          <FormHelperText id="name-error-text">
-            {props.assetData.minPercentageError}
-          </FormHelperText>
-        </FormControl>
-        <FormControl
-          error={props.assetData.maxPercentageError != ''}
-          fullWidth
-          className={classes.margin}
-        >
-          <InputLabel htmlFor="adornment-max-percentage">Max</InputLabel>
-          <Input
-            id="adornment-max-percentage"
-            value={props.assetData.max_to_invest}
-            onChange={e => props.onMaxAssetChange(e, props.assetData.id)}
-            endAdornment={<InputAdornment position="end">%</InputAdornment>}
-          />
-          <FormHelperText id="name-error-text">
-            {props.assetData.maxPercentageError}
-          </FormHelperText>
-        </FormControl>
+        <Box display="flex" flexDirection="column">
+          <Box display="flex">
+            <Box className={classes.minInputBox}>
+              <FormControl
+                error={props.assetData.minPercentageError != ''}
+                fullWidth
+                className={classes.margin}
+              >
+                <InputLabel htmlFor="adornment-min-percentage">Min</InputLabel>
+                <Input
+                  id="adornment-min-percentage"
+                  value={props.assetData.min_to_invest}
+                  onChange={e => props.onMinAssetChange(e, props.assetData.id)}
+                  endAdornment={<InputAdornment position="end">%</InputAdornment>}
+                />
+                <FormHelperText id="name-error-text">
+                  {props.assetData.minPercentageError}
+                </FormHelperText>
+              </FormControl>
+            </Box>
+            <Box>
+              <FormControl
+                error={props.assetData.maxPercentageError != ''}
+                fullWidth
+                className={classes.margin}
+              >
+                <InputLabel htmlFor="adornment-max-percentage">Max</InputLabel>
+                <Input
+                  id="adornment-max-percentage"
+                  value={props.assetData.max_to_invest}
+                  onChange={e => props.onMaxAssetChange(e, props.assetData.id)}
+                  endAdornment={<InputAdornment position="end">%</InputAdornment>}
+                />
+                <FormHelperText id="name-error-text">
+                  {props.assetData.maxPercentageError}
+                </FormHelperText>
+              </FormControl>
+            </Box>
+          </Box>
+          {props.showSimulationMode
+            ? <OptimizationResultComponent
+                assetData={props.assetData}
+                onAmountToInvestChange={props.onAmountToInvestChange}
+              />
+            : null
+          }
+        </Box>
       </CardContent>
     </Card>
   );
 }
 
-export default withStyles(styles)(CustomCard);
+export default withStyles(customCardStyles)(CustomCard);

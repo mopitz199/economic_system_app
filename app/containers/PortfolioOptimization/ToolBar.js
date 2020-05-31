@@ -120,18 +120,50 @@ function ToolBar(props) {
           </Button>
         </Box>
         <Box width={1} display="flex" justifyContent="flex-end">
-          <LoadingButtonComponent
-            onClick={props.onValidateClick}
-            loading={props.loadingValidation}
-            icon={<CheckIcon className={classNames(classes.leftIcon, classes.iconSmall)} />}
-            name={'Validate'}
-          />
-          <LoadingButtonComponent
-            onClick={props.onSaveClick}
-            loading={props.loadingSaving}
-            icon={<Save className={classNames(classes.leftIcon, classes.iconSmall)} />}
-            name={'Save'}
-          />
+          {props.showSimulationMode
+            ? (
+              <Button
+                className={classes.button}
+                variant="contained"
+                color="secondary"
+                onClick={() => { props.onSwitchModeClick(); }}
+              >
+                Stop Simulate Mode
+                <AddIcon className={classes.rightIcon} />
+              </Button>
+            )
+            : (
+              <Button
+                className={classes.button}
+                variant="contained"
+                color="secondary"
+                onClick={() => { props.onSwitchModeClick(); }}
+              >
+                Simulate Mode
+                <AddIcon className={classes.rightIcon} />
+              </Button>
+            )
+          }
+          
+          {props.showSimulationMode
+            ? (
+              <LoadingButtonComponent
+                onClick={props.onSimulateClick}
+                loading={props.loadingSimulation}
+                icon={<CheckIcon className={classNames(classes.leftIcon, classes.iconSmall)} />}
+                name={'Simulate'}
+              />
+            )
+            : (
+              <LoadingButtonComponent
+                onClick={props.onSaveClick}
+                loading={props.loadingSaving}
+                icon={<Save className={classNames(classes.leftIcon, classes.iconSmall)} />}
+                name={'Save'}
+              />
+            )
+
+          }
         </Box>
       </Box>
       <Box className={classes.subToolBox}>
