@@ -86,14 +86,14 @@ function OptimizationResult(props){
       >
         {assetData.amountToInvestResult ? 
           <Chip
-            label="2.4%"
+            label={`$${assetData.amountToInvestResult}`}
             className={classes.amountChip}
             color="secondary"
           /> : null
         }
         {assetData.percentageToInvestResult ? 
           <Chip
-            label="$920"
+            label={`${assetData.percentageToInvestResult}%`}
             className={classes.percentageChip}
             color="primary"
           /> : null

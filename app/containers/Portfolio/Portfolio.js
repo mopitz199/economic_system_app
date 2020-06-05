@@ -1,6 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { PortfolioTable } from 'components';
+import PortfolioTable from '../../components/PortfolioTable/PortfolioTable';
 import PapperBlock from '../../components/PapperBlock/PapperBlock';
 import Summary from './Summary';
 

@@ -23,8 +23,13 @@ class PortfolioOptimization extends React.Component {
       searchResult: '',
       assetList: [],
 
+      totalToInvestValue: '',
+      totalToInvestErrorMessage: '',
+
       minDisposedToLose: 0,
       minDisposedToLoseErrorMessage: '',
+
+      optimism: 10,
 
       loadingSaving: false,
       loadingSimulation: false,
@@ -161,17 +166,77 @@ class PortfolioOptimization extends React.Component {
   }
 
   processOptimization = () => {
-    const assetList = this.state.assetList;
-    setTimeout(() => {
-      assetList.forEach(assetData => {
-        assetData.amountToInvestResult = 10
-        //assetData.percentageToInvestResult = 10
-      });
-      this.setState({
-        assetList,
-        loadingSimulation: false
-      });
-    }, 2000);
+    this.cleanAllErrorMessages({
+      extraState: {
+        loadingSimulation: true,
+      }
+    })
+    this.setState({loadingSimulation: true})
+    
+    let body = {
+      "optimism": this.state.optimism,
+      "min_disposed_to_lose": this.state.minDisposedToLose,
+      "asset_optimizations": []
+    }
+    if(this.state.totalToInvestValue){
+      body['total_amount_to_invest'] = this.state.totalToInvestValue
+    }
+    this.state.assetList.forEach(assetData => {
+      let assetBody = {
+        "asset_id": assetData['asset']['id'],
+        "min_to_invest": assetData['min_to_invest'],
+        "max_to_invest": assetData['max_to_invest'],
+      }
+      if(assetData['amountToInvest']){
+        assetBody['amount_to_invest'] = assetData['amountToInvest']
+      }
+      body.asset_optimizations.push(assetBody)
+    });
+
+    if(this.validate()){
+      customFetch({
+        url: 'http://localhost:9000/api/generate-optimization/',
+        request: {
+          method: 'POST',
+          body: JSON.stringify(body),
+          headers
+        },
+        onServerError: () => {
+          this.setState({
+            open: true,
+            type: 'error',
+            errorMessage: 'Server Error',
+            loadingSimulation: false,
+          });
+        },
+        onSuccess: (data) => {
+          let assetList = []
+          this.state.assetList.forEach((assetData) => {
+            const values = data.results[assetData.asset.id]
+            assetData['percentageToInvestResult'] = values['percentage']
+            if(values['amount']){
+              assetData['amountToInvestResult'] = values['amount']
+            }
+            assetList.push(assetData)
+          })
+          this.setState({
+            assetList: assetList,
+            open: true,
+            type: 'success',
+            errorMessage: 'Your optimization has been simulated',
+            loadingSimulation: false,
+          })
+        },
+        onError: (data) => {
+          this.setState({
+            open: true,
+            type: 'error',
+            errorMessage: data.detail,
+            loadingSimulation: false,
+          });
+        }
+      })
+    }
   }
 
   cleanSimulationResults = () => {
@@ -209,6 +274,14 @@ class PortfolioOptimization extends React.Component {
 
   onMinDisposedToLoseChange = (e) => {
     this.setState({ minDisposedToLose: e.target.value });
+  }
+
+  onTotalToInvestChange = (e) => {
+    this.setState({ totalToInvestValue: e.target.value });
+  }
+
+  onOptimismChange = (value) => {
+    this.setState({optimism: value})
   }
 
   onSearchChange = (value) => {
@@ -410,8 +483,15 @@ class PortfolioOptimization extends React.Component {
             onMinDisposedToLoseChange={this.onMinDisposedToLoseChange}
             minDisposedToLoseValue={this.state.minDisposedToLose}
 
+            onOptimismChange={this.onOptimismChange}
+            optimism={this.state.optimism}
+
             onSimulateClick={this.onSimulateClick}
             loadingSimulation={this.state.loadingSimulation}
+
+            totalToInvestValue={this.state.totalToInvestValue}
+            totalToInvestErrorMessage={this.state.totalToInvestErrorMessage}
+            onTotalToInvestChange={this.onTotalToInvestChange}
 
             onSaveClick={this.onSaveClick}
             loadingSaving={this.state.loadingSaving}

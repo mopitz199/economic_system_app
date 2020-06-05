@@ -11,6 +11,8 @@ import {
   CircularProgress,
   FormHelperText,
 } from '@material-ui/core';
+import InputRange from 'react-input-range';
+import 'ba-styles/vendors/react-input-range/react-input-range.css';
 import AddIcon from '@material-ui/icons/Add';
 import CheckIcon from '@material-ui/icons/Check';
 import Save from '@material-ui/icons/Save';
@@ -51,6 +53,16 @@ const styles = theme => ({
   },
   nameFormControl: {
     marginRight: theme.spacing(3)
+  },
+  inputRange: {
+    width: 200,
+    margin: `${theme.spacing(3)}px 5px`,
+  },
+  inputRangeBox: {
+    marginLeft: theme.spacing(2)
+  },
+  genericFormControl:{
+    marginLeft: theme.spacing(3)
   }
 });
 
@@ -166,9 +178,8 @@ function ToolBar(props) {
           }
         </Box>
       </Box>
-      <Box className={classes.subToolBox}>
+      <Box className={classes.subToolBox} display="flex">
         <FormControl
-          className={classes.nameFormControl}
           error={props.nameErrorMessage != ''}
         >
           <InputLabel htmlFor="adornment-name">Name</InputLabel>
@@ -181,8 +192,23 @@ function ToolBar(props) {
             {props.nameErrorMessage}
           </FormHelperText>
         </FormControl>
-
         <FormControl
+          className={classes.genericFormControl}
+          error={props.totalToInvestErrorMessage != ''}
+        >
+          <InputLabel htmlFor="adornment-amount">Total to invest</InputLabel>
+          <Input
+            id="adornment-amount"
+            value={props.totalToInvestValue}
+            onChange={props.onTotalToInvestChange}
+            startAdornment={<InputAdornment position="start">$</InputAdornment>}
+          />
+          <FormHelperText id="name-error-text">
+            {props.totalToInvestErrorMessage}
+          </FormHelperText>
+        </FormControl>
+        <FormControl
+          className={classes.genericFormControl}
           error={props.minDisposedToLoseErrorMessage != ''}
         >
           <InputLabel htmlFor="adornment-amount">Min disposed to lose</InputLabel>
@@ -196,6 +222,20 @@ function ToolBar(props) {
             {props.minDisposedToLoseErrorMessage}
           </FormHelperText>
         </FormControl>
+        <Box className={classes.inputRangeBox}>
+          <InputLabel htmlFor="input-range">Optimism</InputLabel>
+          <FormControl>
+            <div className={classes.inputRange}>  
+              <InputRange
+                id="input-range"
+                maxValue={100}
+                minValue={0}
+                value={props.optimism}
+                onChange={value => props.onOptimismChange(value)}
+              />
+            </div>
+          </FormControl>
+        </Box>
       </Box>
     </Box>
   );
