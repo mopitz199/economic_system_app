@@ -71,7 +71,7 @@ function OptimizationResult(props){
           <Input
             id="adornment-min-percentage"
             value={assetData.amountToInvest}
-            onChange={e => onAmountToInvestChange(e, assetData.id)}
+            onChange={e => onAmountToInvestChange(e, assetData.componentId)}
             startAdornment={<InputAdornment position="start">$</InputAdornment>}
           />
           <FormHelperText id="name-error-text">
@@ -144,7 +144,7 @@ function CustomCard(props) {
                 <Input
                   id="adornment-min-percentage"
                   value={props.assetData.min_to_invest}
-                  onChange={e => props.onMinAssetChange(e, props.assetData.id)}
+                  onChange={e => props.onMinAssetChange(e, props.assetData.componentId)}
                   endAdornment={<InputAdornment position="end">%</InputAdornment>}
                 />
                 <FormHelperText id="name-error-text">
@@ -162,7 +162,7 @@ function CustomCard(props) {
                 <Input
                   id="adornment-max-percentage"
                   value={props.assetData.max_to_invest}
-                  onChange={e => props.onMaxAssetChange(e, props.assetData.id)}
+                  onChange={e => props.onMaxAssetChange(e, props.assetData.componentId)}
                   endAdornment={<InputAdornment position="end">%</InputAdornment>}
                 />
                 <FormHelperText id="name-error-text">

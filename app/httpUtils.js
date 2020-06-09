@@ -8,7 +8,9 @@ export function customFetch({
   return fetch(url, request)
     .then((res) => {
       if(res.status>=500){
-        onServerError()
+        return res.json().then((data) => {
+          onServerError(data)
+        })
       }
       else if(res.status==201){
         return res.json().then((data) => {

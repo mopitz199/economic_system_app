@@ -8,6 +8,7 @@ import { Snackbar, Button, IconButton, SnackbarContent } from '@material-ui/core
 import ToolBar from './ToolBar';
 import Assets from './Assets';
 import CustomSnackBar from './SnackBar';
+import AssetList from './AssetList';
 import messageStyles from 'ba-styles/Messages.scss';
 import { server, headers } from '../../constants';
 import {customFetch} from '../../httpUtils'
@@ -29,7 +30,7 @@ class PortfolioOptimization extends React.Component {
       minDisposedToLose: 0,
       minDisposedToLoseErrorMessage: '',
 
-      optimism: 10,
+      optimism: 50,
 
       loadingSaving: false,
       loadingSimulation: false,
@@ -42,16 +43,31 @@ class PortfolioOptimization extends React.Component {
     };
   }
 
-  getAssetDataById(id) {
+  getAssetDataByComponentId(id) {
     let correctAssetData = null;
     let index = null;
     this.state.assetList.forEach((assetData, i) => {
-      if (assetData.id == id) {
+      if (assetData.componentId == id) {
         correctAssetData = assetData;
         index = i;
       }
     });
     return [correctAssetData, index];
+  }
+
+  validateTotalAmountToInvest(){
+    let valid = true
+    this.state.assetList.forEach(assetData => {
+      if(assetData.amountToInvest){
+        this.setState({
+          totalToInvestErrorMessage: 'You must fill this field',
+          loadingSimulation: false,
+        });  
+        valid = false
+        return
+      }
+    });
+    return valid
   }
 
   validateSumMin() {
@@ -148,8 +164,8 @@ class PortfolioOptimization extends React.Component {
       assetList = this.state.assetList;
     }
     assetList.forEach(assetData => {
-      assetData.amountToInvestResult = null
-      assetData.percentageToInvestResult = null
+      assetData.amountToInvestResult = ''
+      assetData.percentageToInvestResult = ''
     });
     return assetList;
   }
@@ -158,6 +174,7 @@ class PortfolioOptimization extends React.Component {
     this.setState({
       assetList: this.cleanAssetOptimizationValidations(assetList),
       minDisposedToLoseErrorMessage: '',
+      totalToInvestErrorMessage: '',
       errorMessage: '',
       searchResult: '',
       nameErrorMessage: '',
@@ -201,11 +218,15 @@ class PortfolioOptimization extends React.Component {
           body: JSON.stringify(body),
           headers
         },
-        onServerError: () => {
+        onServerError: (data) => {
+          let message = 'Server Error'
+          if(data.results.detail){
+            message = data.results.detail
+          }
           this.setState({
             open: true,
             type: 'error',
-            errorMessage: 'Server Error',
+            errorMessage: message,
             loadingSimulation: false,
           });
         },
@@ -242,14 +263,16 @@ class PortfolioOptimization extends React.Component {
   cleanSimulationResults = () => {
     const assetList = this.state.assetList;
     assetList.forEach(assetData => {
-      assetData.amountToInvestResult = null
-      assetData.percentageToInvestResult = null
+      assetData.amountToInvestResult = ''
+      assetData.percentageToInvestResult = ''
     });
     return assetList
   }
 
   validate = () => {
     let valid = true
+    valid = this.validateTotalAmountToInvest()
+    if(!valid) return false
     valid = this.validateMinAssetOptimization()
     if(!valid) return false
     valid = this.validateName()
@@ -304,18 +327,19 @@ class PortfolioOptimization extends React.Component {
     if (this.state.searchResult) {
       const asset = JSON.parse(this.state.searchResult);
       const assetData = {};
+      assetData.componentId = assetList.length;
       assetData.asset = asset;
       assetData.min_to_invest = 0;
       assetData.max_to_invest = 0;
       assetData.maxPercentageError = '';
       assetData.minPercentageError = '';
       
-      assetData.amountToInvest = null;
+      assetData.amountToInvest = '';
       assetData.amountToInvestError = '';
-      assetData.amountToInvestResult = null;
-      assetData.percentageToInvestResult = null;
+      assetData.amountToInvestResult = '';
+      assetData.percentageToInvestResult = '';
 
-      assetList.push(assetData);
+      assetList.unshift(assetData);
       this.cleanAllErrorMessages({assetList: assetList})
     }
   }
@@ -324,8 +348,14 @@ class PortfolioOptimization extends React.Component {
     const body = {
       asset_optimizations: [],
       min_disposed_to_lose: this.state.minDisposedToLose,
-      name: this.state.name
+      name: this.state.name,
+      optimism: this.state.optimism,
     };
+
+    if(this.state.totalToInvestValue){
+      body['total_amount_to_invest'] = this.state.totalToInvestValue
+    }
+
     this.state.assetList.forEach(assetOptmization => {
       body.asset_optimizations.push({
         id: assetOptmization.id,
@@ -388,13 +418,14 @@ class PortfolioOptimization extends React.Component {
   }
 
   onDeleteClick = (id) => {
+    debugger
     let assetList = this.state.assetList;
     assetList = assetList.filter(assetData => assetData.id != id);
     this.setState({ assetList });
   }
 
   onMinAssetChange = (e, id) => {
-    const data = this.getAssetDataById(id);
+    const data = this.getAssetDataByComponentId(id);
     data[0].min_to_invest = e.target.value;
     const assetList = this.state.assetList;
     assetList[data[1]] = data[0];
@@ -402,7 +433,7 @@ class PortfolioOptimization extends React.Component {
   }
 
   onMaxAssetChange = (e, id) => {
-    const data = this.getAssetDataById(id);
+    const data = this.getAssetDataByComponentId(id);
     data[0].max_to_invest = e.target.value;
     const assetList = this.state.assetList;
     assetList[data[1]] = data[0];
@@ -410,7 +441,7 @@ class PortfolioOptimization extends React.Component {
   }
 
   onAmountToInvestChange = (e, id) => {
-    const data = this.getAssetDataById(id);
+    const data = this.getAssetDataByComponentId(id);
     data[0].amountToInvest = e.target.value;
     const assetList = this.state.assetList;
     assetList[data[1]] = data[0];
@@ -419,20 +450,22 @@ class PortfolioOptimization extends React.Component {
 
   setInitData = (portfolioOptimization) => {
     const assetList = [];
-    portfolioOptimization.assetoptimization_set.forEach(assetOptimization => {
+    portfolioOptimization.assetoptimization_set.forEach((assetOptimization, index) => {
+      assetOptimization.componentId = index;
       assetOptimization.maxPercentageError = '';
       assetOptimization.minPercentageError = '';
-
       assetOptimization.amountToInvest = '';
       assetOptimization.amountToInvestError = '';
-      assetOptimization.amountToInvestResult = null;
-      assetOptimization.percentageToInvestResult = null;
+      assetOptimization.amountToInvestResult = '';
+      assetOptimization.percentageToInvestResult = '';
       assetList.push(assetOptimization);
     });
     this.setState({
       id: portfolioOptimization.id,
       name: portfolioOptimization.name,
+      optimism: portfolioOptimization.optimism,
       minDisposedToLose: portfolioOptimization.min_disposed_to_lose,
+      totalToInvestValue: portfolioOptimization.total_amount_to_invest,
       assetList,
     });
   }
@@ -501,7 +534,7 @@ class PortfolioOptimization extends React.Component {
             minDisposedToLoseErrorMessage={this.state.minDisposedToLoseErrorMessage}
             showSimulationMode={this.state.showSimulationMode}
           />
-          <Assets
+          <AssetList
             assetList={this.state.assetList}
             onDeleteClick={this.onDeleteClick}
             onMinAssetChange={this.onMinAssetChange}
