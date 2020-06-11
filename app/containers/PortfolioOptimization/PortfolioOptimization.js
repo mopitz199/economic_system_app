@@ -204,8 +204,8 @@ class PortfolioOptimization extends React.Component {
         "min_to_invest": assetData['min_to_invest'],
         "max_to_invest": assetData['max_to_invest'],
       }
-      if(assetData['amountToInvest']){
-        assetBody['amount_to_invest'] = assetData['amountToInvest']
+      if(assetData['amount_to_invest']){
+        assetBody['amount_to_invest'] = assetData['amount_to_invest']
       }
       body.asset_optimizations.push(assetBody)
     });
@@ -315,6 +315,11 @@ class PortfolioOptimization extends React.Component {
     this.setState({ name: e.target.value });
   }
 
+  onCellNameClick = (asset_id) => {
+    const assetUrl = `${window.location.origin}/app/asset/${asset_id}`
+    window.open(assetUrl, "_blank")
+  }
+
   onSwitchModeClick = () => {
     this.setState({
       showSimulationMode: !this.state.showSimulationMode,
@@ -357,12 +362,18 @@ class PortfolioOptimization extends React.Component {
     }
 
     this.state.assetList.forEach(assetOptmization => {
-      body.asset_optimizations.push({
+      let assetOptimizationBody = {
         id: assetOptmization.id,
         asset: assetOptmization.asset.id,
         min_to_invest: assetOptmization.min_to_invest,
         max_to_invest: assetOptmization.max_to_invest,
-      });
+      }
+
+      if(assetOptmization.amount_to_invest){
+        assetOptimizationBody.amount_to_invest = assetOptmization.amount_to_invest
+      }
+
+      body.asset_optimizations.push(assetOptimizationBody);
     });
     return body;
   }
@@ -418,9 +429,11 @@ class PortfolioOptimization extends React.Component {
   }
 
   onDeleteClick = (id) => {
-    debugger
     let assetList = this.state.assetList;
     assetList = assetList.filter(assetData => assetData.id != id);
+    assetList.forEach((assetData, index) => {
+      assetData.componentId = index
+    })
     this.setState({ assetList });
   }
 
@@ -442,7 +455,7 @@ class PortfolioOptimization extends React.Component {
 
   onAmountToInvestChange = (e, id) => {
     const data = this.getAssetDataByComponentId(id);
-    data[0].amountToInvest = e.target.value;
+    data[0].amount_to_invest = e.target.value;
     const assetList = this.state.assetList;
     assetList[data[1]] = data[0];
     this.setState({ assetList });
@@ -451,11 +464,17 @@ class PortfolioOptimization extends React.Component {
   setInitData = (portfolioOptimization) => {
     const assetList = [];
     portfolioOptimization.assetoptimization_set.forEach((assetOptimization, index) => {
+      
       assetOptimization.componentId = index;
       assetOptimization.maxPercentageError = '';
       assetOptimization.minPercentageError = '';
-      assetOptimization.amountToInvest = '';
+
+      if(assetOptimization.amount_to_invest==null){
+        assetOptimization.amount_to_invest = ''
+      }
+
       assetOptimization.amountToInvestError = '';
+
       assetOptimization.amountToInvestResult = '';
       assetOptimization.percentageToInvestResult = '';
       assetList.push(assetOptimization);
@@ -540,6 +559,7 @@ class PortfolioOptimization extends React.Component {
             onMinAssetChange={this.onMinAssetChange}
             onMaxAssetChange={this.onMaxAssetChange}
             onAmountToInvestChange={this.onAmountToInvestChange}
+            onCellNameClick={this.onCellNameClick}
             showSimulationMode={this.state.showSimulationMode}
           />
         </PapperBlock>

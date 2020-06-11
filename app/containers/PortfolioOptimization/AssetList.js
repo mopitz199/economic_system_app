@@ -40,12 +40,17 @@ const styles = theme => ({
 
 
 const rowStyles = theme => {
+  //debugger
   return {
     tableCell: {
       padding: theme.spacing(1)
     },
     greenColor: {
       color: theme.palette.success.main
+    },
+    assetName: {
+      fontWeight: theme.typography.fontWeightBold,
+      cursor: 'pointer'
     }
   }
 }
@@ -53,7 +58,12 @@ function Row(props){
   const {classes} = props
   return (
     <TableRow key={props.key}>
-      <TableCell className={classes.tableCell}>{props.assetData.asset.name}</TableCell>
+      <TableCell
+        className={classes.tableCell, classes.assetName}
+        onClick={() => props.onCellNameClick(props.assetData.asset.id)}
+      >
+        {props.assetData.asset.name}
+      </TableCell>
 
       <TableCell className={classes.tableCell} align="left">
         <FormControl
@@ -96,7 +106,7 @@ function Row(props){
         >
           <Input
             id="adornment-amount-to-invest"
-            value={props.assetData.amountToInvest}
+            value={props.assetData.amount_to_invest}
             onChange={e => props.onAmountToInvestChange(e, props.assetData.componentId)}
             startAdornment={<InputAdornment position="start">$</InputAdornment>}
           />
@@ -140,6 +150,7 @@ function renderRows(
   onMinAssetChange,
   onMaxAssetChange,
   onAmountToInvestChange,
+  onCellNameClick,
   showSimulationMode,
 ){
   const rowComponents = [];
@@ -152,6 +163,7 @@ function renderRows(
         onMinAssetChange={onMinAssetChange}
         onMaxAssetChange={onMaxAssetChange}
         onAmountToInvestChange={onAmountToInvestChange}
+        onCellNameClick={onCellNameClick}
         showSimulationMode={showSimulationMode}
       />
     );
@@ -181,6 +193,7 @@ function AssetList(props){
           props.onMinAssetChange,
           props.onMaxAssetChange,
           props.onAmountToInvestChange,
+          props.onCellNameClick,
           props.showSimulationMode,
         )}
       </TableBody>
