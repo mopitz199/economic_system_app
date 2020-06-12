@@ -1,13 +1,8 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
-import PapperBlock from '../../components/PapperBlock/PapperBlock';
 import CloseIcon from '@material-ui/icons/Close';
-import { Snackbar, Button, IconButton, SnackbarContent  } from '@material-ui/core';
-import ToolBar from './ToolBar';
-import Assets from './Assets';
-import messageStyles from 'ba-styles/Messages.scss';
+import { Snackbar, IconButton, SnackbarContent  } from '@material-ui/core';
 
 
 const styles = theme => {

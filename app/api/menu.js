@@ -12,6 +12,12 @@ module.exports = [
     link: '/app/portfolio',
   },
   {
+    key: 'optimization',
+    name: 'Optimization',
+    icon: 'pie_chart',
+    link: '/app/portfolio-optimization',
+  },
+  {
     key: 'dashboard',
     name: 'Dashboard',
     icon: 'dashboard',

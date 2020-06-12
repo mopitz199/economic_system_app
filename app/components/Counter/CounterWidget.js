@@ -52,14 +52,19 @@ class CounterWidget extends PureComponent {
       children,
       appendText,
       preAppendText,
-      decimals
+      decimals,
+      hideNumber,
     } = this.props;
     return (
       <Paper className={classes.root} style={{ backgroundColor: color }}>
         <div>
           <Typography className={classes.counter}>
             {preAppendText}
-            <CountUp start={start} end={end} duration={duration} useEasing decimals={decimals}/>
+            {!hideNumber ?
+              <CountUp start={start} end={end} duration={duration} useEasing decimals={decimals}/>
+            :
+              null
+            }
             {appendText}
           </Typography>
           <Typography className={classes.title} variant="subtitle1">{title}</Typography>

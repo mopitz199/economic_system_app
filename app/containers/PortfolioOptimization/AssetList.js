@@ -39,9 +39,9 @@ const styles = theme => ({
 });
 
 
-const rowStyles = theme => {
-  //debugger
-  return {
+const rowStyles = theme =>
+  // debugger
+  ({
     tableCell: {
       padding: theme.spacing(1)
     },
@@ -52,10 +52,10 @@ const rowStyles = theme => {
       fontWeight: theme.typography.fontWeightBold,
       cursor: 'pointer'
     }
-  }
-}
-function Row(props){
-  const {classes} = props
+  });
+
+function Row(props) {
+  const { classes } = props;
   return (
     <TableRow key={props.key}>
       <TableCell
@@ -116,15 +116,16 @@ function Row(props){
         </FormControl>
       </TableCell>
 
-      {props.assetData.percentageToInvestResult != '' ? 
+      {props.assetData.percentageToInvestResult != '' ?
         <TableCell
           className={classes.tableCell, classes.greenColor}
-          align="left">{`${props.assetData.percentageToInvestResult}%`}
+          align="left"
+        >{`${props.assetData.percentageToInvestResult}%`}
         </TableCell>
         :
         <TableCell className={classes.tableCell} align="left">-</TableCell>
       }
-      {props.assetData.amountToInvestResult != '' ? 
+      {props.assetData.amountToInvestResult != '' ?
         <TableCell className={classes.tableCell, classes.greenColor} align="left">
           {`$${props.assetData.amountToInvestResult}`}
         </TableCell>
@@ -140,9 +141,9 @@ function Row(props){
         </IconButton>
       </TableCell>
     </TableRow>
-  )
+  );
 }
-const RowComponent = withStyles(rowStyles)(Row)
+const RowComponent = withStyles(rowStyles)(Row);
 
 function renderRows(
   assetList,
@@ -152,7 +153,7 @@ function renderRows(
   onAmountToInvestChange,
   onCellNameClick,
   showSimulationMode,
-){
+) {
   const rowComponents = [];
   assetList.forEach((assetData, index) => {
     rowComponents.push(
@@ -171,7 +172,7 @@ function renderRows(
   return rowComponents;
 }
 
-function AssetList(props){
+function AssetList(props) {
   const { classes } = props;
   return (
     <Table className={classNames(classes.table, tableStyles.bordered)}>
@@ -198,6 +199,6 @@ function AssetList(props){
         )}
       </TableBody>
     </Table>
-  )
+  );
 }
-export default withStyles(styles)(AssetList)
+export default withStyles(styles)(AssetList);

@@ -43,6 +43,19 @@ function Summary(props){
         <CounterWidget
           color={colorfull[0]}
           start={0}
+          end={assetPortdolioData.total_invested}
+          preAppendText="$"
+          duration={3}
+          decimals={2}
+          title="Invested amount"
+        >
+          <MonetizationOnIcon className={classes.counterIcon} />
+        </CounterWidget>
+      </Grid>
+      <Grid item md={3}>
+        <CounterWidget
+          color={colorfull[1]}
+          start={0}
           end={assetPortdolioData.earnings}
           preAppendText="$"
           duration={3}
@@ -52,28 +65,41 @@ function Summary(props){
           <MonetizationOnIcon className={classes.counterIcon} />
         </CounterWidget>
       </Grid>
-      <Grid item md={3}>
+      <Grid item md={2}>
         <CounterWidget
-          color={colorfull[1]}
+          color={colorfull[2]}
           start={0}
-          end={assetPortdolioData.best}
+          end={assetPortdolioData.performance}
           appendText="%"
           duration={3}
           decimals={2}
-          title="Best performance"
+          title="Performance"
         >
           <MonetizationOnIcon className={classes.counterIcon} />
         </CounterWidget>
       </Grid>
-      <Grid item md={3}>
+      <Grid item md={2}>
         <CounterWidget
-          color={colorfull[2]}
+          color={colorfull[3]}
           start={0}
-          end={assetPortdolioData.worst}
-          appendText="%"
-          duration={3}
-          decimals={2}
-          title="Worst performance"
+          end={0}
+          duration={0}
+          appendText={assetPortdolioData.worst}
+          hideNumber={true}
+          title="Worst"
+        >
+          <MonetizationOnIcon className={classes.counterIcon} />
+        </CounterWidget>
+      </Grid>
+      <Grid item md={2}>
+        <CounterWidget
+          color={colorfull[4]}
+          start={0}
+          end={0}
+          duration={0}
+          appendText={assetPortdolioData.best}
+          hideNumber={true}
+          title="Best"
         >
           <MonetizationOnIcon className={classes.counterIcon} />
         </CounterWidget>
