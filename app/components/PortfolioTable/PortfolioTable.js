@@ -24,6 +24,7 @@ import { Paper } from '@material-ui/core';
 import PortfolioSearch from './PortfolioSearch';
 import { anchorTable } from './PortfolioColumns';
 import {server, headers} from '../../constants';
+import { customFetch } from '../../httpUtils';
 
 const branch = 'crudTbFrmPortfolio';
 
@@ -87,6 +88,7 @@ class PortfolioTable extends Component {
       let asset = assetPortfolio.asset
       let performance = assetPortfolio.performance
       let earnings = assetPortfolio.earnings
+      let difference = assetPortfolio.difference
       finalData.push({
         id: assetPortfolio.id,
         asset: JSON.stringify({
@@ -100,14 +102,36 @@ class PortfolioTable extends Component {
         current_value: assetPortfolio.current_price,
         performance: performance,
         earnings: earnings,
+        difference: difference,
       })
     })
     return finalData;
   }
 
+
+  getOptmizationDifference(){
+    let dataApi = this.state.dataApi
+    customFetch({
+      url: `${server}/api/portfolio/apply-optimization/`,
+      request: {
+        method: 'GET',
+        headers: headers,
+      },
+      onServerError: (data) => {debugger},
+      onSuccess: (data) => {
+        dataApi.forEach(element => {
+          element.difference = data.results[element.id]
+        });
+        this.props.fetchData(dataApi, branch)
+      },
+      onError: (data) => {debugger}
+    });
+  }
+
+
   componentWillMount(){
     fetch(
-      `${server}/api/asset/asset_portfolio/`,
+      `${server}/api/portfolio/asset_portfolio/`,
       {headers}
     )
       .then(res => res.json())
@@ -116,6 +140,7 @@ class PortfolioTable extends Component {
           loaded: true,
           dataApi: this.proccesFetch(res['results'])
         })
+        this.getOptmizationDifference()
       })
   }
 
@@ -138,7 +163,7 @@ class PortfolioTable extends Component {
       "purchase_price": data.get("purchase_value"),
     }
     fetch(
-      `${server}/api/asset/asset_portfolio/`,
+      `${server}/api/portfolio/asset_portfolio/`,
       {
         method: 'POST',
         body: JSON.stringify(body),
@@ -181,7 +206,7 @@ class PortfolioTable extends Component {
       "purchase_price": data.get("purchase_value"),
     }
     fetch(
-      `${server}/api/asset/asset_portfolio/${data.get("id")}/`,
+      `${server}/api/portfolio/asset_portfolio/${data.get("id")}/`,
       {
         method: 'PUT',
         body: JSON.stringify(body),
@@ -213,7 +238,7 @@ class PortfolioTable extends Component {
   deleteAssetPortfolio(data, removeRow, reducerName){
     const id = data.get('id')
     fetch(
-      `${server}/api/asset/asset_portfolio/${id}`,
+      `${server}/api/portfolio/asset_portfolio/${id}`,
       {
         method: 'DELETE',
         headers

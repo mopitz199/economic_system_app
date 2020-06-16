@@ -12,7 +12,7 @@ export function customFetch({
           onServerError(data)
         })
       }
-      else if(res.status==201){
+      else if(res.status<=299 && res.status>=200){
         return res.json().then((data) => {
           onSuccess(data)
         })

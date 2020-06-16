@@ -109,6 +109,19 @@ export const anchorTable = [
     className: (value) => percentageStyle(value)
   },
   {
+    name: 'difference',
+    label: 'Difference',
+    initialValue: '-',
+    hidden: false,
+    render: (difference) => {
+      if (difference) {
+        return `$${difference}`;
+      }
+      return "-";
+    },
+    className: (value) => percentageStyle(value)
+  },
+  {
     name: 'edited',
     label: '',
     initialValue: '',

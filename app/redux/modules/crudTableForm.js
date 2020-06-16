@@ -45,6 +45,7 @@ const initialImmutableState = fromJS(initialState);
 
 export default function reducer(state = initialImmutableState, action = {}) {
   const { branch } = action;
+  console.log(action.type)
   switch (action.type) {
     case `${branch}/${FETCH_DATA_FORM}`:
       return state.withMutations((mutableState) => {

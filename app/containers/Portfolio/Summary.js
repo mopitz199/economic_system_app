@@ -24,11 +24,13 @@ function Summary(props){
     'earnings': 0,
     'best': 0,
     'worst': 0,
+    'performance': 0,
+    'total_invested': 0,
   });
 
   useEffect(() => {
     fetch(
-      `${server}/api/asset/asset_portoflio_data/`,
+      `${server}/api/portfolio/asset_portoflio_data/`,
       {headers}
     )
       .then(res => res.json())
