@@ -4,6 +4,7 @@ import TextField from '@material-ui/core/TextField';
 import Select from '@material-ui/core/Select';
 import Checkbox from '@material-ui/core/Checkbox';
 import Switch from '@material-ui/core/Switch';
+import { FormHelperText, FormControl } from '@material-ui/core';
 
 /* Textfield */
 export const TextFieldRedux = ({ meta: { touched, error }, input, ...rest }) => (
@@ -12,6 +13,20 @@ export const TextFieldRedux = ({ meta: { touched, error }, input, ...rest }) => 
     {...input}
     error={touched && Boolean(error)}
   />
+);
+
+/* Textfield With Error*/
+export const TextFieldWithErrorRedux = ({ meta: { touched, error }, input, formControlClassName, ...rest }) => (
+  <FormControl className={formControlClassName}>
+    <TextField
+      {...rest}
+      {...input}
+      error={touched && Boolean(error)}
+    />
+    <FormHelperText error>
+      {touched && error && <span>{error}</span>}
+    </FormHelperText>
+  </FormControl>
 );
 
 TextFieldRedux.propTypes = {

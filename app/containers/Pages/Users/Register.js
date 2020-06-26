@@ -1,6 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import PropTypes from 'prop-types';
+import { SubmissionError } from 'redux-form'
 import { withStyles } from '@material-ui/core/styles';
 import Type from 'ba-styles/Typography.scss';
 import ArrowForward from '@material-ui/icons/ArrowForward';
@@ -11,17 +12,50 @@ import styles from 'ba-components/Forms/user-jss';
 
 import { Grid, Hidden, Typography } from '@material-ui/core';
 
+import { server, headers } from '../../../constants';
+import { customFetch } from '../../../httpUtils';
+
+
 class Login extends React.Component {
   state = {
     valueForm: []
   }
 
   submitForm(values) {
-    setTimeout(() => {
-      this.setState({ valueForm: values });
-      console.log(`You submitted:\n\n${this.state.valueForm}`);
-      window.location.href = '/app';
-    }, 500); // simulate server latency
+    const data = values.toJSON()
+    const body = {
+      'username': data.name,
+      'password': data.password,
+      'repeated_password': data.passwordConfirm,
+      'email': data.email
+    }
+    const url = `${server}/api/user/create-user/`
+    const request = {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: headers,
+    }
+    
+    return customFetch({
+      url: `${server}/api/user/create-user/`,
+      request: {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: headers,
+      },
+      onServerError: (data) => {debugger},
+      onSuccess: (data) => {
+        localStorage.setItem('token', data.results.token);
+        window.location.href = '/app';
+      },
+      onError: (data) => {
+        throw new SubmissionError({
+          name: 'User does not exist',
+          _error: 'Login failed!'
+        })
+      }
+    });
+    // this.setState({ valueForm: values });
   }
 
   render() {

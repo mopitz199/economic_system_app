@@ -7,9 +7,9 @@ import ArrowForward from '@material-ui/icons/ArrowForward';
 import AllInclusive from '@material-ui/icons/AllInclusive';
 import Brightness5 from '@material-ui/icons/Brightness5';
 import People from '@material-ui/icons/People';
-import { Button, FormControl, FormControlLabel, Tabs, Tab } from '@material-ui/core';
+import { Button, FormControlLabel, Tabs, Tab } from '@material-ui/core';
 import styles from './user-jss';
-import { TextFieldRedux, CheckboxRedux } from './ReduxFormMUI';
+import { CheckboxRedux, TextFieldWithErrorRedux, TextFieldRedux } from './ReduxFormMUI';
 import PapperBlock from '../PapperBlock/PapperBlock';
 
 
@@ -48,6 +48,7 @@ class RegisterForm extends React.Component {
 
   render() {
     const {
+      error,
       classes,
       handleSubmit,
       pristine,
@@ -66,61 +67,57 @@ class RegisterForm extends React.Component {
             className={classes.tab}
           >
             <Tab label="With Email" />
-            <Tab label="With Social Network" />
           </Tabs>
           {tab === 0
             && (
               <form onSubmit={handleSubmit}>
+                {error && <strong>{error}</strong>}
                 <div>
-                  <FormControl className={classes.formControl}>
-                    <Field
-                      name="name"
-                      component={TextFieldRedux}
-                      placeholder="Username"
-                      label="Username"
-                      required
-                      className={classes.field}
-                    />
-                  </FormControl>
+                  <Field
+                    name="name"
+                    formControlClassName={classes.formControl}
+                    component={TextFieldWithErrorRedux}
+                    placeholder="Username"
+                    label="Username"
+                    required
+                    className={classes.field}
+                  />
                 </div>
                 <div>
-                  <FormControl className={classes.formControl}>
-                    <Field
-                      name="email"
-                      component={TextFieldRedux}
-                      placeholder="Your Email"
-                      label="Your Email"
-                      required
-                      validate={[required, email]}
-                      className={classes.field}
-                    />
-                  </FormControl>
+                  <Field
+                    name="email"
+                    formControlClassName={classes.formControl}
+                    component={TextFieldWithErrorRedux}
+                    placeholder="Your Email"
+                    label="Your Email"
+                    required
+                    validate={[required, email]}
+                    className={classes.field}
+                  />
                 </div>
                 <div>
-                  <FormControl className={classes.formControl}>
-                    <Field
-                      name="password"
-                      component={TextFieldRedux}
-                      type="password"
-                      label="Your Password"
-                      required
-                      validate={[required, passwordsMatch]}
-                      className={classes.field}
-                    />
-                  </FormControl>
+                  <Field
+                    name="password"
+                    formControlClassName={classes.formControl}
+                    component={TextFieldWithErrorRedux}
+                    type="password"
+                    label="Your Password"
+                    required
+                    validate={[required, passwordsMatch]}
+                    className={classes.field}
+                  />
                 </div>
                 <div>
-                  <FormControl className={classes.formControl}>
-                    <Field
-                      name="passwordConfirm"
-                      component={TextFieldRedux}
-                      type="password"
-                      label="Re-type Password"
-                      required
-                      validate={[required, passwordsMatch]}
-                      className={classes.field}
-                    />
-                  </FormControl>
+                  <Field
+                    name="passwordConfirm"
+                    component={TextFieldWithErrorRedux}
+                    type="password"
+                    label="Re-type Password"
+                    required
+                    error
+                    validate={[required, passwordsMatch]}
+                    className={classes.field}
+                  />
                 </div>
                 <div className={classNames(classes.btnArea, classes.noMargin)}>
                   <div className={classes.optArea}>

@@ -22,4 +22,7 @@ export function customFetch({
         })
       }
     })
+    .catch(err => {
+      throw err
+    })
 }
