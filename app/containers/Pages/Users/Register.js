@@ -3,22 +3,42 @@ import { Helmet } from 'react-helmet';
 import PropTypes from 'prop-types';
 import { SubmissionError } from 'redux-form'
 import { withStyles } from '@material-ui/core/styles';
+import { connect } from 'react-redux';
+import { loginAction } from 'actions/LoginActions';
+import { bindActionCreators } from 'redux';
 import Type from 'ba-styles/Typography.scss';
 import ArrowForward from '@material-ui/icons/ArrowForward';
 import brand from 'ba-api/brand';
 import logo from 'ba-images/logo.svg';
 import { RegisterForm } from 'ba-components';
 import styles from 'ba-components/Forms/user-jss';
-
 import { Grid, Hidden, Typography } from '@material-ui/core';
 
+import PapperBlock from '../../../components/PapperBlock/PapperBlock';
 import { server, headers } from '../../../constants';
 import { customFetch } from '../../../httpUtils';
 
 
 class Login extends React.Component {
   state = {
-    valueForm: []
+    valueForm: [],
+    registered: false,
+  }
+
+  mapFields(error_obj){
+    let mapped_obj = {}
+    for (const property in error_obj) {
+      if(property=='username'){
+        mapped_obj.name = error_obj[property]
+      }else if(property=='repeated_password'){
+        mapped_obj.passwordConfirm = error_obj[property]
+      }else if(property=='non_field_errors'){
+        mapped_obj._error = error_obj[property]
+      }else{
+        mapped_obj[property] = error_obj[property]
+      }
+    }
+    return mapped_obj
   }
 
   submitForm(values) {
@@ -43,19 +63,68 @@ class Login extends React.Component {
         body: JSON.stringify(body),
         headers: headers,
       },
-      onServerError: (data) => {debugger},
+      onServerError: (data) => {
+        throw new SubmissionError({
+          _error: 'Server error'
+        })
+      },
       onSuccess: (data) => {
         localStorage.setItem('token', data.results.token);
-        window.location.href = '/app';
+        this.setState({registered: true})
+        this.props.loginUser(data.results)
       },
       onError: (data) => {
-        throw new SubmissionError({
-          name: 'User does not exist',
-          _error: 'Login failed!'
-        })
+        const errors = this.mapFields(data)
+        throw new SubmissionError(errors)
       }
     });
     // this.setState({ valueForm: values });
+  }
+
+  renderRegistered = () => {
+    const { classes } = this.props;
+    return (
+      <Grid container spacing={3} alignItems="center" direction="row" justify="center">
+        <Grid item md={4} xs={11}>
+          <PapperBlock whiteBg title="Done!" desc="">
+            <Typography variant="h6">Now you can start your investments!</Typography>
+            <a href="/app">Let's go!</a>
+          </PapperBlock>
+        </Grid>
+      </Grid>
+    )
+  }
+
+  renderRegister = () => {
+    const { classes } = this.props;
+    return (
+      <Grid container spacing={3} alignItems="center" direction="row" justify="center">
+        <Grid item container justify="center" spacing={0} className={classes.loginWrap}>
+          <Hidden smDown>
+            <Grid item md={6} className={classes.welcomeWrap}>
+              {/* Welcome Login */}
+              <div className={classes.welcome}>
+                <div className={classes.welcomeContent}>
+                  <div className={classes.brand}>
+                    <img src={logo} alt={brand.name} />
+                    <h3>{brand.name}</h3>
+                  </div>
+                  <Typography variant="h4">
+                    <span className={Type.light}>Nice to meet You :)</span>
+                  </Typography>
+                </div>
+                <ArrowForward className={classes.decoBottom} />
+              </div>
+            </Grid>
+          </Hidden>
+          <Grid item md={6} sm={8} xs={11}>
+            {/* ----------------------------------------------------------------------*/}
+            {/* Load Register Form */}
+            <RegisterForm onSubmit={(values) => this.submitForm(values)} />
+          </Grid>
+        </Grid>
+      </Grid>
+    )
   }
 
   render() {
@@ -73,32 +142,10 @@ class Login extends React.Component {
           <meta property="twitter:description" content={description} />
         </Helmet>
         <div className={classes.container}>
-          <Grid container spacing={3} alignItems="center" direction="row" justify="center">
-            <Grid item container justify="center" spacing={0} className={classes.loginWrap}>
-              <Hidden smDown>
-                <Grid item md={6} className={classes.welcomeWrap}>
-                  {/* Welcome Login */}
-                  <div className={classes.welcome}>
-                    <div className={classes.welcomeContent}>
-                      <div className={classes.brand}>
-                        <img src={logo} alt={brand.name} />
-                        <h3>{brand.name}</h3>
-                      </div>
-                      <Typography variant="h4">
-                        <span className={Type.light}>Nice to meet You :)</span>
-                      </Typography>
-                    </div>
-                    <ArrowForward className={classes.decoBottom} />
-                  </div>
-                </Grid>
-              </Hidden>
-              <Grid item md={6} sm={8} xs={11}>
-                {/* ----------------------------------------------------------------------*/}
-                {/* Load Register Form */}
-                <RegisterForm onSubmit={(values) => this.submitForm(values)} />
-              </Grid>
-            </Grid>
-          </Grid>
+          {this.state.registered
+            ? this.renderRegistered()
+            : this.renderRegister()
+          }
         </div>
       </div>
     );
@@ -109,4 +156,18 @@ Login.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Login);
+
+const mapStateToProps = state => ({
+  user: state.getIn(['login', 'user']),
+})
+
+const mapDispatchToProps = dispatch => ({
+  loginUser: bindActionCreators(loginAction, dispatch),
+})
+
+const LoginMapped = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Login);
+
+export default withStyles(styles)(LoginMapped);

@@ -1,18 +1,15 @@
-import { Map, fromJS } from 'immutable';
-import { INIT } from 'ba-actions/actionTypes';
-
 const initialState = {
-  usersLogin: Map({
-    email: 'johndoe@mail.com',
-    password: '12345678',
-    remember: false
-  })
+  user: {
+    username: ''
+  }
 };
-const initialImmutableState = fromJS(initialState);
-export default function reducer(state = initialImmutableState, action = {}) {
+export default function reducer(state=initialState, action = {}) {
   switch (action.type) {
-    case INIT:
-      return state;
+    case 'LOGIN':
+      return {
+        ...state,
+        user: action.user
+      }
     default:
       return state;
   }

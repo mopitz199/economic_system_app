@@ -136,12 +136,12 @@ const LoginFormReduxed = reduxForm({
   enableReinitialize: true,
 })(LoginForm);
 
-const reducer = 'login';
+/*const reducer = 'login';
 const FormInit = connect(
   state => ({
     force: state,
     initialValues: state.getIn([reducer, 'usersLogin'])
   }),
-)(LoginFormReduxed);
+)(LoginFormReduxed);*/
 
-export default withStyles(styles)(FormInit);
+export default withStyles(styles)(LoginFormReduxed);

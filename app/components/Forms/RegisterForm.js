@@ -7,9 +7,10 @@ import ArrowForward from '@material-ui/icons/ArrowForward';
 import AllInclusive from '@material-ui/icons/AllInclusive';
 import Brightness5 from '@material-ui/icons/Brightness5';
 import People from '@material-ui/icons/People';
-import { Button, FormControlLabel, Tabs, Tab } from '@material-ui/core';
+import Type from 'ba-styles/Typography.scss';
+import { Button, FormControlLabel, Tabs, Tab, Typography } from '@material-ui/core';
 import styles from './user-jss';
-import { CheckboxRedux, TextFieldWithErrorRedux, TextFieldRedux } from './ReduxFormMUI';
+import { CheckboxRedux, TextFieldWithErrorRedux } from './ReduxFormMUI';
 import PapperBlock from '../PapperBlock/PapperBlock';
 
 
@@ -58,98 +59,67 @@ class RegisterForm extends React.Component {
     return (
       <div className={classes.formWrap}>
         <PapperBlock whiteBg title="Create New Account" desc="">
-          <Tabs
-            value={this.state.tab}
-            onChange={this.handleChangeTab}
-            indicatorColor="primary"
-            textColor="primary"
-            centered
-            className={classes.tab}
-          >
-            <Tab label="With Email" />
-          </Tabs>
-          {tab === 0
-            && (
-              <form onSubmit={handleSubmit}>
-                {error && <strong>{error}</strong>}
-                <div>
-                  <Field
-                    name="name"
-                    formControlClassName={classes.formControl}
-                    component={TextFieldWithErrorRedux}
-                    placeholder="Username"
-                    label="Username"
-                    required
-                    className={classes.field}
-                  />
-                </div>
-                <div>
-                  <Field
-                    name="email"
-                    formControlClassName={classes.formControl}
-                    component={TextFieldWithErrorRedux}
-                    placeholder="Your Email"
-                    label="Your Email"
-                    required
-                    validate={[required, email]}
-                    className={classes.field}
-                  />
-                </div>
-                <div>
-                  <Field
-                    name="password"
-                    formControlClassName={classes.formControl}
-                    component={TextFieldWithErrorRedux}
-                    type="password"
-                    label="Your Password"
-                    required
-                    validate={[required, passwordsMatch]}
-                    className={classes.field}
-                  />
-                </div>
-                <div>
-                  <Field
-                    name="passwordConfirm"
-                    component={TextFieldWithErrorRedux}
-                    type="password"
-                    label="Re-type Password"
-                    required
-                    error
-                    validate={[required, passwordsMatch]}
-                    className={classes.field}
-                  />
-                </div>
-                <div className={classNames(classes.btnArea, classes.noMargin)}>
-                  <div className={classes.optArea}>
-                    <FormControlLabel control={<Field name="checkbox" component={CheckboxRedux} className={classes.agree} />} label="Agree with" />
-                    <a href="#" className={classes.link}>Terms &amp; Condition</a>
-                  </div>
-                  <Button variant="contained" color="primary" type="submit">
-                  Continue
-                    <ArrowForward className={classNames(classes.rightIcon, classes.iconSmall)} disabled={submitting || pristine} />
-                  </Button>
-                </div>
-              </form>
-            )
-          }
-          {tab === 1
-            && (
-              <div>
-                <Button fullWidth variant="contained" size="large" className={classNames(classes.redBtn, classes.socMedFull)} type="button">
-                  <AllInclusive className={classNames(classes.leftIcon, classes.iconSmall)} />
-                Socmed 1
-                </Button>
-                <Button fullWidth variant="contained" size="large" className={classNames(classes.blueBtn, classes.socMedFull)} type="button">
-                  <Brightness5 className={classNames(classes.leftIcon, classes.iconSmall)} />
-                Socmed 2
-                </Button>
-                <Button fullWidth variant="contained" size="large" className={classes.cyanBtn} type="button">
-                  <People className={classNames(classes.leftIcon, classes.iconSmall)} />
-                Socmed 3
-                </Button>
-              </div>
-            )
-          }
+          <form onSubmit={handleSubmit}>
+            {error && (
+              <Typography className={Type.textError} gutterBottom>
+                {error}
+              </Typography>
+            )}
+            <div>
+              <Field
+                name="name"
+                formControlClassName={classes.formControl}
+                component={TextFieldWithErrorRedux}
+                placeholder="Username"
+                label="Username"
+                required
+                className={classes.field}
+              />
+            </div>
+            <div>
+              <Field
+                name="email"
+                formControlClassName={classes.formControl}
+                component={TextFieldWithErrorRedux}
+                placeholder="Your Email"
+                label="Your Email"
+                required
+                validate={[required, email]}
+                className={classes.field}
+              />
+            </div>
+            <div>
+              <Field
+                name="password"
+                formControlClassName={classes.formControl}
+                component={TextFieldWithErrorRedux}
+                type="password"
+                label="Your Password"
+                required
+                validate={[required, passwordsMatch]}
+                className={classes.field}
+              />
+            </div>
+            <div>
+              <Field
+                name="passwordConfirm"
+                formControlClassName={classes.formControl}
+                component={TextFieldWithErrorRedux}
+                type="password"
+                label="Re-type Password"
+                required
+                error
+                validate={[required, passwordsMatch]}
+                className={classes.field}
+              />
+            </div>
+            <div className={classNames(classes.btnArea, classes.noMargin)}>
+              <Button variant="contained" color="primary" type="submit">
+              Continue
+                <ArrowForward className={classNames(classes.rightIcon, classes.iconSmall)} disabled={submitting || pristine} />
+              </Button>
+            </div>
+          </form>
         </PapperBlock>
       </div>
     );

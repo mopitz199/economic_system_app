@@ -1,6 +1,9 @@
 import React from 'react';
 import { PropTypes } from 'prop-types';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { Switch, Route } from 'react-router-dom';
+import { loginAction } from 'actions/LoginActions';
 import Dashboard from '../Templates/Dashboard';
 import {
   DashboardV1, DashboardV2,
@@ -29,7 +32,29 @@ import {
   Milestones, Portfolio, Asset, PortfolioOptimization
 } from '../pageListAsync';
 
+import { server, headers } from '../../constants';
+import { customFetch } from '../../httpUtils'
+
+
 class Application extends React.Component {
+
+  componentWillMount(){
+    customFetch({
+      url: `${server}/api/user/get-user-data/`,
+      request: {
+        method: 'GET',
+        headers: headers,
+      },
+      onServerError: (data) => {debugger},
+      onSuccess: (data) => {
+        this.props.loginUser(data.results)
+      },
+      onError: (data) => {
+        window.location.href = "/";
+      }
+    });
+  }
+
   render() {
     return (
       <Dashboard history={this.props.history}>
@@ -134,4 +159,17 @@ Application.propTypes = {
   history: PropTypes.object.isRequired,
 };
 
-export default Application;
+const mapStateToProps = state => ({
+  user: state.getIn(['login', 'user']),
+})
+
+const mapDispatchToProps = dispatch => ({
+  loginUser: bindActionCreators(loginAction, dispatch),
+})
+
+const ApplicationMapped = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Application);
+
+export default ApplicationMapped;

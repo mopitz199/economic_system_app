@@ -1,6 +1,8 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import brand from 'ba-api/brand';
 import dummy from 'ba-api/dummyContents';
@@ -17,8 +19,10 @@ const MenuContent = props => {
     turnDarker,
     drawerPaper,
     toggleDrawerOpen,
-    loadTransition
+    loadTransition,
+    loginReducer
   } = props;
+
   return (
     <div className={classNames(classes.drawerInner, !drawerPaper ? classes.drawerPaperClose : '')}>
       <div className={classes.drawerHeader}>
@@ -33,7 +37,7 @@ const MenuContent = props => {
             className={classNames(classes.avatar, classes.bigAvatar)}
           />
           <div>
-            <h4>{dummy.user.name}</h4>
+            <h4>{loginReducer.user.username}</h4>
             <span>{dummy.user.title}</span>
           </div>
         </div>
@@ -66,7 +70,18 @@ MenuContent.defaultProps = {
   loadTransition: () => {},
 };
 
-const MenuContentStyle = withStyles(styles)(MenuContent);
+
+const mapStateToProps = state => {
+  return {
+    loginReducer: state.getIn(['login']),
+  }
+}
+
+const MenuContentMapped = connect(
+  mapStateToProps,
+)(MenuContent);
+
+const MenuContentStyle = withStyles(styles)(MenuContentMapped);
 
 class Sidebar extends React.Component {
   state = {
@@ -80,7 +95,7 @@ class Sidebar extends React.Component {
       open,
       toggleDrawerOpen,
       loadTransition,
-      turnDarker
+      turnDarker,
     } = this.props;
     return (
       <Fragment>
