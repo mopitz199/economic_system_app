@@ -8,6 +8,7 @@ import { Hidden } from '@material-ui/core';
 import Login from '../Users/Login';
 
 class LoginDedicated extends React.Component {
+
   render() {
     const { classes } = this.props;
     return (

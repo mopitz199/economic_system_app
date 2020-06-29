@@ -3,9 +3,12 @@ const server = 'http://localhost:9000';
 
 const token = localStorage.getItem('token')
 
-const headers = {
+let headers = {
   'Content-Type': 'application/json',
-  Authorization: `Token ${token}`
 };
+
+if(token){
+  headers['Authorization'] = `Token ${token}`
+}
 
 export { server, headers };

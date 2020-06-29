@@ -3,7 +3,7 @@ import { PropTypes } from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Switch, Route } from 'react-router-dom';
-import { loginAction } from 'actions/LoginActions';
+import { saveUserAction } from 'actions/UserActions';
 import Dashboard from '../Templates/Dashboard';
 import {
   DashboardV1, DashboardV2,
@@ -47,7 +47,7 @@ class Application extends React.Component {
       },
       onServerError: (data) => {debugger},
       onSuccess: (data) => {
-        this.props.loginUser(data.results)
+        this.props.saveUserAction(data.results)
       },
       onError: (data) => {
         window.location.href = "/";
@@ -159,16 +159,12 @@ Application.propTypes = {
   history: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
-  user: state.getIn(['login', 'user']),
-})
-
 const mapDispatchToProps = dispatch => ({
-  loginUser: bindActionCreators(loginAction, dispatch),
+  saveUserAction: bindActionCreators(saveUserAction, dispatch),
 })
 
 const ApplicationMapped = connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
 )(Application);
 

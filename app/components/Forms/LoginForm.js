@@ -4,13 +4,14 @@ import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import { Field, reduxForm } from 'redux-form/immutable';
 import { connect } from 'react-redux';
+import Type from 'ba-styles/Typography.scss';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import AllInclusive from '@material-ui/icons/AllInclusive';
 import Brightness5 from '@material-ui/icons/Brightness5';
 import People from '@material-ui/icons/People';
 import ArrowForward from '@material-ui/icons/ArrowForward';
-import { Button, IconButton, InputAdornment, FormControl, FormControlLabel } from '@material-ui/core';
+import { Button, IconButton, InputAdornment, FormControl, FormControlLabel, Typography } from '@material-ui/core';
 import styles from './user-jss';
 import { TextFieldRedux, CheckboxRedux } from './ReduxFormMUI';
 import { ContentDivider } from '../Divider';
@@ -40,6 +41,7 @@ class LoginForm extends React.Component {
 
   render() {
     const {
+      error,
       classes,
       handleSubmit,
       pristine,
@@ -49,6 +51,11 @@ class LoginForm extends React.Component {
       <div className={classes.formWrap}>
         <PapperBlock whiteBg title="Login" desc="">
           <form onSubmit={handleSubmit}>
+            {error && (
+              <Typography className={Type.textError} gutterBottom>
+                {error}
+              </Typography>
+            )}
             <div>
               <FormControl className={classes.formControl}>
                 <Field
@@ -136,12 +143,12 @@ const LoginFormReduxed = reduxForm({
   enableReinitialize: true,
 })(LoginForm);
 
-/*const reducer = 'login';
+const reducer = 'login';
 const FormInit = connect(
   state => ({
     force: state,
     initialValues: state.getIn([reducer, 'usersLogin'])
   }),
-)(LoginFormReduxed);*/
+)(LoginFormReduxed);
 
-export default withStyles(styles)(LoginFormReduxed);
+export default withStyles(styles)(FormInit);

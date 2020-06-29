@@ -67,17 +67,6 @@ class RegisterForm extends React.Component {
             )}
             <div>
               <Field
-                name="name"
-                formControlClassName={classes.formControl}
-                component={TextFieldWithErrorRedux}
-                placeholder="Username"
-                label="Username"
-                required
-                className={classes.field}
-              />
-            </div>
-            <div>
-              <Field
                 name="email"
                 formControlClassName={classes.formControl}
                 component={TextFieldWithErrorRedux}

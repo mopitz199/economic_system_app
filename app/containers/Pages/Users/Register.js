@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { SubmissionError } from 'redux-form'
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
-import { loginAction } from 'actions/LoginActions';
+import { saveUserAction } from 'actions/UserActions';
 import { bindActionCreators } from 'redux';
 import Type from 'ba-styles/Typography.scss';
 import ArrowForward from '@material-ui/icons/ArrowForward';
@@ -23,6 +23,13 @@ class Login extends React.Component {
   state = {
     valueForm: [],
     registered: false,
+  }
+
+  componentWillMount(){
+    const token = localStorage.getItem('token')
+    if(token){
+      window.location.href = '/app';
+    }
   }
 
   mapFields(error_obj){
@@ -44,7 +51,6 @@ class Login extends React.Component {
   submitForm(values) {
     const data = values.toJSON()
     const body = {
-      'username': data.name,
       'password': data.password,
       'repeated_password': data.passwordConfirm,
       'email': data.email
@@ -71,7 +77,7 @@ class Login extends React.Component {
       onSuccess: (data) => {
         localStorage.setItem('token', data.results.token);
         this.setState({registered: true})
-        this.props.loginUser(data.results)
+        this.props.saveUserAction(data.results)
       },
       onError: (data) => {
         const errors = this.mapFields(data)
@@ -156,17 +162,12 @@ Login.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-
-const mapStateToProps = state => ({
-  user: state.getIn(['login', 'user']),
-})
-
 const mapDispatchToProps = dispatch => ({
-  loginUser: bindActionCreators(loginAction, dispatch),
+  saveUserAction: bindActionCreators(saveUserAction, dispatch),
 })
 
 const LoginMapped = connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
 )(Login);
 

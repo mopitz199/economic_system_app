@@ -73,7 +73,7 @@ MenuContent.defaultProps = {
 
 const mapStateToProps = state => {
   return {
-    loginReducer: state.getIn(['login']),
+    loginReducer: state.getIn(['user']),
   }
 }
 

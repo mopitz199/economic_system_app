@@ -2,14 +2,17 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import brand from 'ba-api/brand';
 import PropTypes from 'prop-types';
+import { SubmissionError } from 'redux-form'
 import { withStyles } from '@material-ui/core/styles';
 import Type from 'ba-styles/Typography.scss';
 import ArrowForward from '@material-ui/icons/ArrowForward';
 import logo from 'ba-images/logo.svg';
 import { LoginForm } from 'ba-components';
 import styles from 'ba-components/Forms/user-jss';
-
 import { Grid, Hidden, Typography } from '@material-ui/core';
+
+import { server, headers } from '../../../constants';
+import { customFetch } from '../../../httpUtils';
 
 class Login extends React.Component {
   state = {
@@ -17,11 +20,48 @@ class Login extends React.Component {
   }
 
   submitForm(values) {
+    const jsonData = values.toJSON()
+    const body = {
+      'username': jsonData.email,
+      'password': jsonData.password
+    }
+    return customFetch({
+      url: `${server}/api/user/get-token/`,
+      request: {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: headers,
+      },
+      onServerError: (data) => {
+        throw new SubmissionError({
+          _error: 'Server error'
+        })
+      },
+      onSuccess: (data) => {
+        if(data.results){
+          localStorage.setItem('token', data.results);
+          window.location.href = '/app';
+        }else{
+          throw new SubmissionError({
+            _error: 'Username or password incorrect'
+          })
+        }
+        /*this.setState({registered: true})
+        this.props.saveUserAction(data.results)*/
+      },
+      onError: (data) => {
+        debugger
+        //throw new SubmissionError(errors)
+      }
+    });
+
+    /*
     setTimeout(() => {
       this.setState({ valueForm: values });
       console.log(`You submitted:\n\n${this.state.valueForm}`);
       window.location.href = '/app';
     }, 500); // simulate server latency
+    */
   }
 
   render() {

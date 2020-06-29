@@ -8,6 +8,7 @@ import history from 'utils/history';
 
 import languageProviderReducer from 'containers/LanguageProvider/reducer';
 import login from './modules/login';
+import user from './modules/user';
 import uiReducer from './modules/ui';
 import treeTable from './modules/treeTable';
 import crudTable from './modules/crudTable';
@@ -44,6 +45,7 @@ export default function createReducer(injectedReducers) {
     ui: uiReducer,
     initval,
     login,
+    user,
     socmed,
     calendar,
     ecommerce,
