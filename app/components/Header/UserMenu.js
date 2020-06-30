@@ -43,6 +43,11 @@ class UserMenu extends React.Component {
     this.setState({ anchorEl: null, openMenu: null });
   };
 
+  onLogOutClick = () => {
+    localStorage.removeItem('token')
+    this.setState({ anchorEl: null, openMenu: null });
+  }
+
   render() {
     const { classes, dark } = this.props;
     const { anchorEl, openMenu } = this.state;
@@ -160,7 +165,7 @@ class UserMenu extends React.Component {
             </ListItemIcon>
           </MenuItem>
           <Divider />
-          <MenuItem onClick={this.handleClose} component={Link} to="/">
+          <MenuItem onClick={this.onLogOutClick} component={Link} to="/">
             <ListItemIcon>
               <ExitToApp />
             </ListItemIcon>

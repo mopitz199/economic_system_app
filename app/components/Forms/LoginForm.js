@@ -103,26 +103,12 @@ class LoginForm extends React.Component {
               </Button>
             </div>
             <ContentDivider content="OR" />
-            <div className={classes.btnArea}>
-              <Button variant="contained" size="small" className={classes.redBtn} type="button">
-                <AllInclusive className={classNames(classes.leftIcon, classes.iconSmall)} />
-                Socmed 1
-              </Button>
-              <Button variant="contained" size="small" className={classes.blueBtn} type="button">
-                <Brightness5 className={classNames(classes.leftIcon, classes.iconSmall)} />
-                Socmed 2
-              </Button>
-              <Button variant="contained" size="small" className={classes.cyanBtn} type="button">
-                <People className={classNames(classes.leftIcon, classes.iconSmall)} />
-                Socmed 3
-              </Button>
-            </div>
             <div className={classes.footer}>
               Cannot Login?
               <Button size="small" color="secondary" className={classes.button}>Forgot Password</Button>
               |
               {' '}
-              <Button size="small" color="secondary" className={classes.button}>Register</Button>
+              <Button size="small" color="secondary" className={classes.button} href="/register">Register</Button>
             </div>
           </form>
         </PapperBlock>

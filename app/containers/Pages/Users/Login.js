@@ -16,7 +16,17 @@ import { customFetch } from '../../../httpUtils';
 
 class Login extends React.Component {
   state = {
-    valueForm: []
+    valueForm: [],
+    hasToken: false
+  }
+
+  componentWillMount(){
+    const token = localStorage.getItem('token')
+    if(token){
+      window.location.href = '/app';
+    }else{
+      this.setState({hasToken: true})
+    }
   }
 
   submitForm(values) {
