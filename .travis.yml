@@ -1,0 +1,17 @@
+language: generic
+sudo: required
+
+services:
+  - docker
+
+deploy:
+  provider: elasticbeanstalk
+  region: "us-east-1"
+  app: "economicapp-frontend"
+  env: "EconomicappFrontend-env"
+  bucket_name: "elasticbeanstalk-us-east-1-960622128562"
+  bucket_path: "economicapp-frontend"
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY

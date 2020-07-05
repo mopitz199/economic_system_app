@@ -68,7 +68,7 @@ class Application extends React.Component {
       return (
         <Dashboard history={this.props.history}>
           <Switch>
-            <Route exact path="/app" component={DashboardV1} />
+            <Route exact path="/app" component={Milestones} />
             <Route exact path="/app/milestones" component={Milestones} />
             <Route exact path="/app/portfolio" component={Portfolio} />
             <Route exact path="/app/asset/:assetId" component={Asset} />
