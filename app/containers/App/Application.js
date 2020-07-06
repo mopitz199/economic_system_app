@@ -58,6 +58,7 @@ class Application extends React.Component {
         this.props.saveUserAction(data.results)
       },
       onError: (data) => {
+        localStorage.removeItem('token')
         window.location.href = "/";
       }
     });
