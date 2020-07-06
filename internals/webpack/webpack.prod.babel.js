@@ -49,6 +49,7 @@ module.exports = require('./webpack.base.babel')({
     splitChunks: {
       chunks: 'all',
       minSize: 30000,
+      maxSize: 30000,
       minChunks: 1,
       maxAsyncRequests: 5,
       maxInitialRequests: 3,
