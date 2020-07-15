@@ -10,3 +10,15 @@ after_success:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   - docker push mopitz/frontend-nginx-proxy
   - docker push mopitz/frontend-app
+
+deploy:
+  provider: elasticbeanstalk
+  region: us-east-1
+  app: economicapp-frontend
+  env: EconomicappFrontend-prod
+  bucket_name: elasticbeanstalk-us-east-1-960622128562
+  bucket_path: economicapp-frontend-prod
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
