@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import brand from 'ba-api/brand';
 import PropTypes from 'prop-types';
-import { SubmissionError } from 'redux-form';
+import { SubmissionError } from 'redux-form'
 import { withStyles } from '@material-ui/core/styles';
 import Type from 'ba-styles/Typography.scss';
 import ArrowForward from '@material-ui/icons/ArrowForward';
@@ -20,48 +20,48 @@ class Login extends React.Component {
     hasToken: false
   }
 
-  componentWillMount() {
-    const token = localStorage.getItem('token');
-    if (token) {
+  componentWillMount(){
+    const token = localStorage.getItem('token')
+    if(token){
       window.location.href = '/app';
-    } else {
-      this.setState({ hasToken: true });
+    }else{
+      this.setState({hasToken: true})
     }
   }
 
   submitForm(values) {
-    const jsonData = values.toJSON();
+    const jsonData = values.toJSON()
     const body = {
-      username: jsonData.email,
-      password: jsonData.password
-    };
+      'username': jsonData.email,
+      'password': jsonData.password
+    }
     return customFetch({
       url: `${server}/api/user/get-token/`,
       request: {
         method: 'POST',
         body: JSON.stringify(body),
-        headers,
+        headers: headers,
       },
       onServerError: (data) => {
         throw new SubmissionError({
           _error: 'Server error'
-        });
+        })
       },
       onSuccess: (data) => {
-        if (data.results) {
+        if(data.results){
           localStorage.setItem('token', data.results);
           window.location.href = '/app';
-        } else {
+        }else{
           throw new SubmissionError({
             _error: 'Username or password incorrect'
-          });
+          })
         }
-        /* this.setState({registered: true})
-        this.props.saveUserAction(data.results) */
+        /*this.setState({registered: true})
+        this.props.saveUserAction(data.results)*/
       },
       onError: (data) => {
-
-        // throw new SubmissionError(errors)
+        debugger
+        //throw new SubmissionError(errors)
       }
     });
 
@@ -101,7 +101,7 @@ class Login extends React.Component {
                         <h3>{brand.name}</h3>
                       </div>
                       <Typography variant="h3">
-                        <span className={Type.light}>Heldfsdlo thereee,</span>
+                        <span className={Type.light}>Hello there,</span>
                       </Typography>
                       <Typography variant="h6" className={classes.brandText}>
                         <span className={Type.regular}>
