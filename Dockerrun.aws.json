@@ -29,7 +29,7 @@
   "containerDefinitions": [
     {
       "name": "app",
-      "image": "mopitz/economic-app-frontend",
+      "image": "mopitz/frontend-app",
       "essential": true,
       "networkMode": "host",
       "memoryReservation": 256,
@@ -50,7 +50,7 @@
     },
     {
       "name": "nginx-proxy",
-      "image": "mopitz/nginx-proxy",
+      "image": "mopitz/frontend-nginx-proxy",
       "essential": true,
       "networkMode": "host",
       "memoryReservation": 128,
