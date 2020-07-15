@@ -1,0 +1,129 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "volumes": [
+    {
+      "name": "home-ec2-user-certs",
+      "host": {
+        "sourcePath": "/home/ec2-user/certs"
+      }
+    },
+    {
+      "name": "etc-nginx-vhost-d",
+      "host": {
+        "sourcePath": "/etc/nginx/vhost.d"
+      }
+    },
+    {
+      "name": "usr-share-nginx-html",
+      "host": {
+        "sourcePath": "/usr/share/nginx/html"
+      }
+    },
+    {
+      "name": "var-run-docker-sock",
+      "host": {
+        "sourcePath": "/var/run/docker.sock"
+      }
+    }
+  ],
+  "containerDefinitions": [
+    {
+      "name": "app",
+      "image": "mopitz/economic-app-frontend",
+      "essential": true,
+      "networkMode": "host",
+      "memoryReservation": 256,
+      "environment": [
+        {
+          "name": "VIRTUAL_HOST",
+          "value": "app.economicapp.io"
+        },
+        {
+          "name": "LETSENCRYPT_HOST",
+          "value": "app.economicapp.io"
+        },
+        {
+          "name": "LETSENCRYPT_EMAIL",
+          "value": "economicsystemapp@gmail.com"
+        }
+      ]
+    },
+    {
+      "name": "nginx-proxy",
+      "image": "mopitz/nginx-proxy",
+      "essential": true,
+      "networkMode": "host",
+      "memoryReservation": 128,
+      "dockerLabels": {
+        "com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy": "true"
+      },
+      "links": ["app"],
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "hostPort": 80
+        },
+        {
+          "containerPort": 443,
+          "hostPort": 443
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "home-ec2-user-certs",
+          "containerPath": "/etc/nginx/certs",
+          "readOnly": true
+        },
+        {
+          "sourceVolume": "etc-nginx-vhost-d",
+          "containerPath": "/etc/nginx/vhost.d"
+        },
+        {
+          "sourceVolume": "usr-share-nginx-html",
+          "containerPath": "/usr/share/nginx/html:ro"
+        },
+        {
+          "sourceVolume": "var-run-docker-sock",
+          "containerPath": "/tmp/docker.sock",
+          "readOnly": true
+        }
+      ]
+    },
+    {
+      "name": "letsencrypt-nginx-proxy-companion",
+      "image": "jrcs/letsencrypt-nginx-proxy-companion",
+      "essential": true,
+      "memoryReservation": 128,
+      "environment": [
+        {
+          "name": "NGINX_PROXY_CONTAINER",
+          "value": "nginx-proxy"
+        }
+      ],
+      "volumesFrom": [
+        {
+          "sourceContainer": "nginx-proxy"
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "home-ec2-user-certs",
+          "containerPath": "/etc/nginx/certs:rw"
+        },
+        {
+          "sourceVolume": "etc-nginx-vhost-d",
+          "containerPath": "/etc/nginx/vhost.d"
+        },
+        {
+          "sourceVolume": "usr-share-nginx-html",
+          "containerPath": "/usr/share/nginx/html"
+        },
+        {
+          "sourceVolume": "var-run-docker-sock",
+          "containerPath": "/var/run/docker.sock",
+          "readOnly": true
+        }
+      ]
+    }
+  ]
+}

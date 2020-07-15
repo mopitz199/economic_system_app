@@ -5,7 +5,7 @@ WORKDIR '/app'
 COPY package*.json ./
 RUN npm install
 
-COPY . .
+COPY ./ ./
 RUN rm app/api/menu.js
 RUN cp app/api/menuProd.js app/api/menu.js
 RUN npm run build

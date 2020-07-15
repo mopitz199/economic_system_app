@@ -1,17 +1,12 @@
-language: generic
 sudo: required
+language: generic
 
 services:
   - docker
 
-deploy:
-  provider: elasticbeanstalk
-  region: "us-east-1"
-  app: "economicapp-frontend"
-  env: "EconomicappFrontend-env"
-  bucket_name: "elasticbeanstalk-us-east-1-960622128562"
-  bucket_path: "economicapp-frontend"
-  on:
-    branch: master
-  access_key_id: $AWS_ACCESS_KEY
-  secret_access_key: $AWS_SECRET_KEY
+after_success:
+  - docker build -t mopitz/frontend-nginx-proxy ./nginx-proxy
+  - docker build -t mopitz/frontend-app .
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID"
+  - docker push mopitz/frontend-nginx-proxy
+  - docker push mopitz/frontend-app
