@@ -11,6 +11,9 @@ after_success:
   - docker push mopitz/frontend-nginx-proxy
   - docker push mopitz/frontend-app
 
+before_deploy:
+  - zip -r economicapp-frontend.zip Dockerrun.aws.json .ebextensions 
+
 deploy:
   provider: elasticbeanstalk
   region: us-east-1
@@ -18,6 +21,8 @@ deploy:
   env: EconomicappFrontend-prod
   bucket_name: elasticbeanstalk-us-east-1-960622128562
   bucket_path: economicapp-frontend-prod
+  zip-file: economicapp-frontend.zip
+  skip_cleanup: true
   on:
     branch: master
   access_key_id: $AWS_ACCESS_KEY
