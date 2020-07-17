@@ -8,6 +8,12 @@
       }
     },
     {
+      "name": "home-ec2-user-enviroments",
+      "host": {
+        "sourcePath": "/home/ec2-user/environments"
+      }
+    },
+    {
       "name": "etc-nginx-vhost-d",
       "host": {
         "sourcePath": "/etc/nginx/vhost.d"
@@ -45,6 +51,13 @@
         {
           "name": "LETSENCRYPT_EMAIL",
           "value": "economicsystemapp@gmail.com"
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "home-ec2-user-enviroments",
+          "containerPath": "/enviroments",
+          "readOnly": true
         }
       ]
     },
