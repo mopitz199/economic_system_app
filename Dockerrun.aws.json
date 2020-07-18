@@ -93,7 +93,7 @@
         },
         {
           "sourceVolume": "usr-share-nginx-html",
-          "containerPath": "/usr/share/nginx/html:ro"
+          "containerPath": "/usr/share/nginx/html"
         },
         {
           "sourceVolume": "var-run-docker-sock",
@@ -121,7 +121,7 @@
       "mountPoints": [
         {
           "sourceVolume": "home-ec2-user-certs",
-          "containerPath": "/etc/nginx/certs:rw"
+          "containerPath": "/etc/nginx/certs"
         },
         {
           "sourceVolume": "etc-nginx-vhost-d",
