@@ -1,4 +1,10 @@
 {$DOMAIN_NAME} www.{$DOMAIN_NAME} {
+    proxy /images app/{uri} {
+        header_upstream Host {host}
+        header_upstream X-Real-IP {remote}
+        header_upstream X-Forwarded-Proto {scheme}
+        header_upstream X-CSRFToken {~csrftoken}
+    }
     proxy / app {
         header_upstream Host {host}
         header_upstream X-Real-IP {remote}
