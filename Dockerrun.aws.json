@@ -2,33 +2,9 @@
   "AWSEBDockerrunVersion": 2,
   "volumes": [
     {
-      "name": "home-ec2-user-certs",
+      "name": "caddy_volume",
       "host": {
-        "sourcePath": "/home/ec2-user/certs"
-      }
-    },
-    {
-      "name": "home-ec2-user-enviroments",
-      "host": {
-        "sourcePath": "/home/ec2-user/environments"
-      }
-    },
-    {
-      "name": "etc-nginx-vhost-d",
-      "host": {
-        "sourcePath": "/etc/nginx/vhost.d"
-      }
-    },
-    {
-      "name": "usr-share-nginx-html",
-      "host": {
-        "sourcePath": "/usr/share/nginx/html"
-      }
-    },
-    {
-      "name": "var-run-docker-sock",
-      "host": {
-        "sourcePath": "/var/run/docker.sock"
+        "sourcePath": "/root/.caddy"
       }
     }
   ],
@@ -36,41 +12,28 @@
     {
       "name": "app",
       "image": "mopitz/frontend-app",
+      "hostname": "app",
       "essential": true,
-      "networkMode": "host",
-      "memoryReservation": 256,
-      "environment": [
-        {
-          "name": "VIRTUAL_HOST",
-          "value": "app.economicapp.io"
-        },
-        {
-          "name": "LETSENCRYPT_HOST",
-          "value": "app.economicapp.io"
-        },
-        {
-          "name": "LETSENCRYPT_EMAIL",
-          "value": "economicsystemapp@gmail.com"
-        }
-      ],
-      "mountPoints": [
-        {
-          "sourceVolume": "home-ec2-user-enviroments",
-          "containerPath": "/enviroments",
-          "readOnly": true
-        }
-      ]
+      "memoryReservation": 256
     },
     {
-      "name": "nginx-proxy",
-      "image": "mopitz/frontend-nginx-proxy",
-      "essential": true,
-      "networkMode": "host",
-      "memoryReservation": 128,
-      "dockerLabels": {
-        "com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy": "true"
-      },
+      "name": "caddy",
+      "image": "mopitz/frontend-caddy",
+      "memoryReservation": 56,
       "links": ["app"],
+      "essential": true,
+      "mountPoints": [
+        {
+          "sourceVolume": "caddy_volume",
+          "containerPath": "/root/.caddy"
+        }
+      ],
+      "environment": [
+        {
+          "name": "ACME_AGREE",
+          "value": "true"
+        }
+      ],
       "portMappings": [
         {
           "containerPort": 80,
@@ -79,62 +42,6 @@
         {
           "containerPort": 443,
           "hostPort": 443
-        }
-      ],
-      "mountPoints": [
-        {
-          "sourceVolume": "home-ec2-user-certs",
-          "containerPath": "/etc/nginx/certs",
-          "readOnly": true
-        },
-        {
-          "sourceVolume": "etc-nginx-vhost-d",
-          "containerPath": "/etc/nginx/vhost.d"
-        },
-        {
-          "sourceVolume": "usr-share-nginx-html",
-          "containerPath": "/usr/share/nginx/html"
-        },
-        {
-          "sourceVolume": "var-run-docker-sock",
-          "containerPath": "/tmp/docker.sock",
-          "readOnly": true
-        }
-      ]
-    },
-    {
-      "name": "letsencrypt-nginx-proxy-companion",
-      "image": "jrcs/letsencrypt-nginx-proxy-companion",
-      "essential": true,
-      "memoryReservation": 128,
-      "environment": [
-        {
-          "name": "NGINX_PROXY_CONTAINER",
-          "value": "nginx-proxy"
-        }
-      ],
-      "volumesFrom": [
-        {
-          "sourceContainer": "nginx-proxy"
-        }
-      ],
-      "mountPoints": [
-        {
-          "sourceVolume": "home-ec2-user-certs",
-          "containerPath": "/etc/nginx/certs"
-        },
-        {
-          "sourceVolume": "etc-nginx-vhost-d",
-          "containerPath": "/etc/nginx/vhost.d"
-        },
-        {
-          "sourceVolume": "usr-share-nginx-html",
-          "containerPath": "/usr/share/nginx/html"
-        },
-        {
-          "sourceVolume": "var-run-docker-sock",
-          "containerPath": "/var/run/docker.sock",
-          "readOnly": true
         }
       ]
     }
