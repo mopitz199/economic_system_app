@@ -12,9 +12,8 @@ after_success:
   - docker push mopitz/frontend-app
 
 before_deploy:
-  - zip -r economicapp-frontend.zip Dockerrun.aws.json .ebextensions
+  - zip -r economicapp-frontend.zip Dockerrun.aws.json
   - rm Dockerrun.aws.json
-  - rm -R .ebextensions
 
 deploy:
   provider: elasticbeanstalk
