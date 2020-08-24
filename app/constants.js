@@ -1,4 +1,4 @@
-const server = 'https://economicapp.io';
+const server = 'https://eb.economicapp.io';
 //const server = 'http://localhost:9000';
 
 const token = localStorage.getItem('token')

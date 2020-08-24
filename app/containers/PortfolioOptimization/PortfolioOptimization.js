@@ -207,7 +207,7 @@ class PortfolioOptimization extends React.Component {
 
     if (this.validate()) {
       customFetch({
-        url: 'http://localhost:9000/api/generate-optimization/',
+        url: `${server}/api/generate-optimization/`,
         request: {
           method: 'POST',
           body: JSON.stringify(body),
