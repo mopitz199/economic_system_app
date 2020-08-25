@@ -1,10 +1,18 @@
 {$DOMAIN_NAME} www.{$DOMAIN_NAME} {
-    proxy /images app/{uri} {
-        header_upstream Host {host}
-        header_upstream X-Real-IP {remote}
-        header_upstream X-Forwarded-Proto {scheme}
-        header_upstream X-CSRFToken {~csrftoken}
+
+    route /images/* {
+	    proxy app
     }
+
+    route / {
+	    proxy / app {
+            header_upstream Host {host}
+            header_upstream X-Real-IP {remote}
+            header_upstream X-Forwarded-Proto {scheme}
+            header_upstream X-CSRFToken {~csrftoken}
+        }
+    }
+
     tls mopitz199@gmail.com
     log stdout
     errors stderr
