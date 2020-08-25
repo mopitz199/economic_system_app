@@ -14,7 +14,13 @@
       "image": "mopitz/frontend-app",
       "hostname": "app",
       "essential": true,
-      "memoryReservation": 256
+      "memoryReservation": 256,
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "hostPort": 9000
+        }
+      ]
     },
     {
       "name": "caddy",

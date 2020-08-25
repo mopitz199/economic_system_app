@@ -5,12 +5,6 @@
         header_upstream X-Forwarded-Proto {scheme}
         header_upstream X-CSRFToken {~csrftoken}
     }
-    proxy / app {
-        header_upstream Host {host}
-        header_upstream X-Real-IP {remote}
-        header_upstream X-Forwarded-Proto {scheme}
-        header_upstream X-CSRFToken {~csrftoken}
-    }
     tls mopitz199@gmail.com
     log stdout
     errors stderr
